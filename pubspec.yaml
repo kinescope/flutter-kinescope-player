@@ -1,0 +1,19 @@
+name: flutter_kinescope_sdk
+description: Kinescope Flutter SDK
+version: 0.0.1
+homepage: https://kinescope.io/
+
+environment:
+  sdk: ">=2.12.0 <3.0.0"
+  flutter: ">=2.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_inappwebview: ^5.3.2
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+  surf_lint_rules: ^1.1.1-dev.1
