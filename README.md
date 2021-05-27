@@ -2,7 +2,7 @@
 
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://kinescope.io/)
 
-Flutter plugin for playing Kinescope videos.
+Flutter plugin for the Kinescope player.
 
 This package supports Android and iOS and uses [flutter_inappwebview](https://pub.dev/packages/flutter_inappwebview) under-the-hood.
 
