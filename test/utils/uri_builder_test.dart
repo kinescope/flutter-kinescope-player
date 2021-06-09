@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import 'package:flutter_kinescope_sdk/flutter_kinescope_sdk.dart';
+import 'package:flutter_kinescope_sdk/src/data/player_parameters.dart';
 import 'package:flutter_kinescope_sdk/src/utils/uri_builder.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -20,30 +20,33 @@ void main() {
   group('UriBuilder', () {
     group('buildEmbeddedVideoUri', () {
       test('builds valid Uri', () {
-        final uri = UriBuilder.buildEmbeddedVideoUri(
-          videoId: 'test',
-          parameters: const PlayerParameters(),
-        );
+        final uri = UriBuilder.buildVideoUri(videoId: 'test');
 
         expect(
           uri.toString(),
-          equals('https://kinescope.io/embed/test'),
+          equals('https://kinescope.io/test'),
         );
       });
-      test('builds valid Uri with bool parameters', () {
-        const parameters = PlayerParameters(
+    });
+
+    group('parametersToBehavior', () {
+      test('returns null on empty parameters', () {
+        const params = PlayerParameters();
+
+        expect(UriBuilder.parametersToBehavior(params), isNull);
+      });
+      test('returns valid map', () {
+        const params = PlayerParameters(
           autoplay: true,
           muted: true,
-        );
-
-        final uri = UriBuilder.buildEmbeddedVideoUri(
-          videoId: 'test',
-          parameters: parameters,
+          loop: true,
         );
 
         expect(
-          uri.toString(),
-          equals('https://kinescope.io/embed/test?autoplay=true&muted=true'),
+          UriBuilder.parametersToBehavior(params),
+          equals(
+            {'autoPlay': 'true', 'muted': 'true', 'loop': 'true'},
+          ),
         );
       });
     });

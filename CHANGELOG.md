@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.0
+
+* Added `KinescopePlayerController` with stream providing `KinescopePlayerStatus` and some methods to control video playback.
+
 ## 0.0.1
 
 * **Initial Release:** introduce `flutter_kinescope_sdk` with `KinescopePlayer` widget and `PlayerParameters` for initial player setup.

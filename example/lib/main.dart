@@ -44,39 +44,182 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  var _videoId = _initialVideoId;
   final _textEditingController = TextEditingController(text: _initialVideoId);
+  late KinescopePlayerController _kinescopeController;
+
+  @override
+  void initState() {
+    super.initState();
+    _kinescopeController = KinescopePlayerController(
+      _initialVideoId,
+      parameters: const PlayerParameters(
+        autoplay: true,
+        muted: false,
+        loop: true,
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Kinescope SDK example'),
-      ),
-      body: Column(
-        children: [
-          SizedBox(
-            height: MediaQuery.of(context).size.height / 4,
-            child: KinescopePlayer(
-              _videoId,
-              parameters: const PlayerParameters(
-                autoplay: true,
+    return StreamBuilder<KinescopePlayerStatus>(
+      stream: _kinescopeController.status,
+      initialData: KinescopePlayerStatus.unknown,
+      builder: (context, snapshot) {
+        final isUnknown = snapshot.data == KinescopePlayerStatus.unknown;
+
+        return Scaffold(
+          appBar: AppBar(
+            title: const Text('Kinescope SDK example'),
+          ),
+          body: Column(
+            children: [
+              SizedBox(
+                height: MediaQuery.of(context).size.height / 4,
+                child: KinescopePlayer(
+                  controller: _kinescopeController,
+                ),
               ),
-            ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: TextField(
+                  controller: _textEditingController,
+                  decoration: const InputDecoration(labelText: 'Video ID'),
+                  onSubmitted: (id) {
+                    _kinescopeController.load(id);
+                  },
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    IconButton(
+                      onPressed: !isUnknown ? _play : null,
+                      icon: const Icon(Icons.play_arrow),
+                    ),
+                    IconButton(
+                      onPressed: !isUnknown ? _pause : null,
+                      icon: const Icon(Icons.pause),
+                    ),
+                    IconButton(
+                      onPressed: !isUnknown ? _stop : null,
+                      icon: const Icon(Icons.stop),
+                    ),
+                    IconButton(
+                      onPressed: !isUnknown ? _unmute : null,
+                      icon: const Icon(Icons.volume_up),
+                    ),
+                    IconButton(
+                      onPressed: !isUnknown ? _mute : null,
+                      icon: const Icon(Icons.volume_off),
+                    ),
+                  ],
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Column(
+                      children: [
+                        IconButton(
+                          onPressed: !isUnknown ? _rewindBackward : null,
+                          icon: const Icon(Icons.fast_rewind),
+                          tooltip: 'rewind 10 seconds backward',
+                        ),
+                        const Text('- 10 sec'),
+                      ],
+                    ),
+                    TextButton(
+                      onPressed: !isUnknown ? _seekToCenter : null,
+                      child: const Text('seek to center'),
+                    ),
+                    Column(
+                      children: [
+                        IconButton(
+                          onPressed: !isUnknown ? _rewindForward : null,
+                          icon: const RotatedBox(
+                            quarterTurns: 2,
+                            child: Icon(Icons.fast_rewind),
+                          ),
+                          tooltip: 'rewind 10 seconds forward',
+                        ),
+                        const Text('+ 10 sec'),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+              Container(
+                width: double.infinity,
+                height: 50,
+                margin: const EdgeInsets.all(8.0),
+                decoration: BoxDecoration(
+                  color: Theme.of(context).primaryColor,
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                child: Center(
+                  child: Text(
+                    'KinescopePlayerStatus: ${snapshot.data}',
+                    style: const TextStyle(color: Colors.white),
+                  ),
+                ),
+              ),
+            ],
           ),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: TextField(
-              controller: _textEditingController,
-              decoration: const InputDecoration(labelText: 'Video ID'),
-              onSubmitted: (text) {
-                setState(() {
-                  _videoId = text;
-                });
-              },
-            ),
-          ),
-        ],
+        );
+      },
+    );
+  }
+
+  void _pause() {
+    _kinescopeController.pause();
+  }
+
+  void _play() {
+    _kinescopeController.play();
+  }
+
+  void _stop() {
+    _kinescopeController.stop();
+  }
+
+  void _unmute() {
+    _kinescopeController.unmute();
+  }
+
+  void _mute() {
+    _kinescopeController.mute();
+  }
+
+  Future<void> _rewindBackward() async {
+    final _currentTime = await _kinescopeController.getCurrentTime();
+
+    final _duration = Duration(
+      seconds:
+          _currentTime.inSeconds - 10 > 0 ? _currentTime.inSeconds - 10 : 0,
+    );
+
+    _kinescopeController.seekTo(_duration);
+  }
+
+  Future<void> _rewindForward() async {
+    final _currentTime = await _kinescopeController.getCurrentTime();
+
+    _kinescopeController.seekTo(
+      _currentTime + const Duration(seconds: 10),
+    );
+  }
+
+  Future<void> _seekToCenter() async {
+    final _duration = await _kinescopeController.getDuration();
+    _kinescopeController.seekTo(
+      Duration(
+        seconds: _duration.inSeconds ~/ 2,
       ),
     );
   }
