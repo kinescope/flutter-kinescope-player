@@ -23,8 +23,12 @@ class PlayerParameters {
   /// Whether the sound is turned on at the time of initials.
   final bool? muted;
 
+  /// Restart the video automatically after it's ended.
+  final bool? loop;
+
   const PlayerParameters({
     this.autoplay,
     this.muted,
+    this.loop,
   });
 }

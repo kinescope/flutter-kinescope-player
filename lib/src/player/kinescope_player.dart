@@ -14,10 +14,12 @@
 
 import 'dart:io';
 
-import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
-import 'package:flutter_kinescope_sdk/src/data/player_parameters.dart';
-import 'package:flutter_kinescope_sdk/src/utils/uri_builder.dart';
+
+import '../data/player_status.dart';
+import '../kinescope_player_controller.dart';
+import '../utils/uri_builder.dart';
 
 /// A widget to play or stream Kinescope videos using the official embedded API
 ///
@@ -25,60 +27,258 @@ import 'package:flutter_kinescope_sdk/src/utils/uri_builder.dart';
 ///
 /// ```dart
 /// KinescopePlayer(
-///   yourVideoId,
-///   parameters: const PlayerParameters(
-///     autoplay: true,
-///     muted: true,
+///   controller: KinescopePlayerController(
+///     yourVideoId,
+///     parameters: const PlayerParameters(
+///       autoplay: true,
+///       muted: true,
+///       loop: true,
+///     ),
 ///   ),
+///   aspectRatio: 16 / 10,
 /// )
 /// ```
-class KinescopePlayer extends StatelessWidget {
-  final String videoId;
+class KinescopePlayer extends StatefulWidget {
+  /// The [controller] for this player.
+  final KinescopePlayerController controller;
 
-  /// Initial [KinescopePlayer] parameters
-  final PlayerParameters parameters;
+  /// Aspect ratio for the player,
+  /// by default it's 16 / 9.
+  final double aspectRatio;
 
-  const KinescopePlayer(
-    this.videoId, {
+  /// A widget to play Kinescope videos.
+  const KinescopePlayer({
     Key? key,
-    this.parameters = const PlayerParameters(),
+    required this.controller,
+    this.aspectRatio = 16 / 9,
   }) : super(key: key);
 
   @override
+  _KinescopePlayerState createState() => _KinescopePlayerState();
+}
+
+class _KinescopePlayerState extends State<KinescopePlayer> {
+  late String videoId;
+
+  @override
+  void initState() {
+    super.initState();
+    videoId = widget.controller.videoId;
+  }
+
+  @override
+  void dispose() {
+    widget.controller.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return InAppWebView(
-      key: ValueKey(videoId),
-      initialOptions: InAppWebViewGroupOptions(
-        crossPlatform: InAppWebViewOptions(
-          useShouldOverrideUrlLoading: true,
-          mediaPlaybackRequiresUserGesture: false,
-          transparentBackground: true,
-          disableContextMenu: true,
-          supportZoom: false,
-          userAgent: Platform.isIOS
-              ? 'Mozilla/5.0 (iPad; CPU iPhone OS 13_2 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko)'
-              : '',
+    return AspectRatio(
+      aspectRatio: widget.aspectRatio,
+      child: InAppWebView(
+        onWebViewCreated: (controller) {
+          widget.controller.webViewController = controller;
+          controller
+            ..addJavaScriptHandler(
+              handlerName: 'events',
+              callback: (args) {
+                final event = (args.first as String).toLowerCase();
+
+                widget.controller.statusController.add(
+                  KinescopePlayerStatus.values.firstWhere(
+                    (value) => value.toString() == event,
+                    orElse: () => KinescopePlayerStatus.unknown,
+                  ),
+                );
+              },
+            )
+            ..addJavaScriptHandler(
+              handlerName: 'getCurrentTimeResult',
+              callback: (args) {
+                final dynamic seconds = args.first;
+                if (seconds is num) {
+                  widget.controller.getCurrentTimeCompleter?.complete(
+                    Duration(milliseconds: (seconds * 1000).ceil()),
+                  );
+                }
+              },
+            )
+            ..addJavaScriptHandler(
+              handlerName: 'getDurationResult',
+              callback: (args) {
+                final dynamic seconds = args.first;
+                if (seconds is num) {
+                  widget.controller.getDurationCompleter?.complete(
+                    Duration(milliseconds: (seconds * 1000).ceil()),
+                  );
+                }
+              },
+            );
+        },
+        initialOptions: InAppWebViewGroupOptions(
+          crossPlatform: InAppWebViewOptions(
+            useShouldOverrideUrlLoading: true,
+            mediaPlaybackRequiresUserGesture: false,
+            transparentBackground: true,
+            disableContextMenu: true,
+            supportZoom: false,
+            userAgent: Platform.isIOS
+                ? 'Mozilla/5.0 (iPad; CPU iPhone OS 13_2 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko)'
+                : '',
+          ),
+          android: AndroidInAppWebViewOptions(
+            useHybridComposition: true,
+          ),
+          ios: IOSInAppWebViewOptions(
+            allowsInlineMediaPlayback: true,
+            allowsBackForwardNavigationGestures: false,
+          ),
         ),
-        android: AndroidInAppWebViewOptions(
-          useHybridComposition: true,
-        ),
-        ios: IOSInAppWebViewOptions(
-          allowsInlineMediaPlayback: true,
-          allowsBackForwardNavigationGestures: false,
-        ),
+        iosOnNavigationResponse: (_, __) async {
+          return IOSNavigationResponseAction.CANCEL;
+        },
+        shouldOverrideUrlLoading: (_, __) async => Platform.isIOS
+            ? NavigationActionPolicy.ALLOW
+            : NavigationActionPolicy.CANCEL,
+        onConsoleMessage: (_, message) {
+          debugPrint('js: ${message.message}');
+        },
+        initialData: InAppWebViewInitialData(data: _player),
       ),
-      initialUrlRequest: URLRequest(
-        url: UriBuilder.buildEmbeddedVideoUri(
-          videoId: videoId,
-          parameters: parameters,
-        ),
-      ),
-      iosOnNavigationResponse: (_, __) async {
-        return IOSNavigationResponseAction.CANCEL;
-      },
-      shouldOverrideUrlLoading: (_, __) async {
-        return NavigationActionPolicy.CANCEL;
-      },
     );
   }
+
+  // ignore: member-ordering-extended
+  String get _player => '''
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no'>
+    <style>
+        #player {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            left: 0;
+            top: 0;
+        }
+    </style>
+
+    <script>
+        window.addEventListener("flutterInAppWebViewPlatformReady", function (event) {
+            window.flutter_inappwebview.callHandler('events', 'ready');
+        });
+
+        let kinescopePlayerFactory = null;
+
+        let kinescopePlayer = null;
+
+        let initialVideoUri = '${UriBuilder.buildVideoUri(videoId: videoId)}';
+
+        function onKinescopeIframeAPIReady(playerFactory) {
+            kinescopePlayerFactory = playerFactory;
+
+            loadVideo(initialVideoUri);
+        }
+
+        function loadVideo(videoUri) {
+            if (kinescopePlayer != null) {
+                kinescopePlayer.destroy();
+                kinescopePlayer = null;
+            }
+
+            if (kinescopePlayerFactory != null) {
+                var devElement = document.createElement("div");
+                devElement.id = "player";
+                document.body.append(devElement);
+
+                kinescopePlayerFactory
+                    .create('player', {
+                        url: videoUri,
+                        size: { width: '100%', height: '100%' },
+                        behaviour: ${UriBuilder.parametersToBehavior(widget.controller.parameters)}
+                    })
+                    .then(function (player) {
+                        kinescopePlayer = player;
+
+                        player.on(player.Events.Ready, function (event) { window.flutter_inappwebview.callHandler('events', 'ready'); });
+                        player.on(player.Events.Playing, function (event) { window.flutter_inappwebview.callHandler('events', 'playing'); });
+                        player.on(player.Events.Waiting, function (event) { window.flutter_inappwebview.callHandler('events', 'waiting'); });
+                        player.on(player.Events.Pause, function (event) { window.flutter_inappwebview.callHandler('events', 'pause'); });
+                        player.on(player.Events.Ended, function (event) { window.flutter_inappwebview.callHandler('events', 'ended'); });
+                    });
+            }
+        }
+
+        function play() {
+            if (kinescopePlayer != null)
+              kinescopePlayer.play();
+        }
+
+        function pause() {
+            if (kinescopePlayer != null)
+              kinescopePlayer.pause();
+        }
+
+        function stop() {
+            if (kinescopePlayer != null)
+              kinescopePlayer.stop();
+        }
+
+        function getCurrentTime() {
+            if (kinescopePlayer != null)
+              return kinescopePlayer.getCurrentTime();
+        }
+
+        function seekTo(seconds) {
+            if (kinescopePlayer != null)
+              kinescopePlayer.seekTo(seconds);
+        }
+
+        function getCurrentTime() {
+            if (kinescopePlayer != null)
+              kinescopePlayer.getCurrentTime().then((value) => {
+                window.flutter_inappwebview.callHandler('getCurrentTimeResult', value);
+              });
+        }
+
+        function getDuration() {
+            if (kinescopePlayer != null)
+              kinescopePlayer.getDuration().then((value) => {
+                window.flutter_inappwebview.callHandler('getDurationResult', value);
+              });
+        }
+
+        function setVolume(value) {
+            if (kinescopePlayer != null)
+              kinescopePlayer.setVolume(value);
+        }
+        
+        function mute() {
+            if (kinescopePlayer != null)
+              kinescopePlayer.mute();
+        }
+
+        function unmute() {
+            if (kinescopePlayer != null)
+              kinescopePlayer.unmute();
+        }
+    </script>
+</head>
+
+<body>
+    <script>
+        var tag = document.createElement('script');
+
+        tag.src = 'https://player.kinescope.io/latest/iframe.player.js';
+        var firstScriptTag = document.getElementsByTagName('script')[0];
+        firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+    </script>
+</body>
+
+</html>
+''';
 }

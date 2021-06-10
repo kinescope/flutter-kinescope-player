@@ -16,28 +16,26 @@ import 'package:flutter_kinescope_sdk/src/data/player_parameters.dart';
 
 const _scheme = 'https';
 const _kinescopeUri = 'kinescope.io';
-const _embed = 'embed';
 
 class UriBuilder {
-  static Uri buildEmbeddedVideoUri({
+  static Uri buildVideoUri({
     required String videoId,
-    required PlayerParameters parameters,
   }) =>
       Uri(
         scheme: _scheme,
         host: _kinescopeUri,
-        pathSegments: [_embed, videoId],
-        queryParameters: parametersToQueryParameters(parameters),
+        pathSegments: [videoId],
       );
 
-  static Map<String, Object>? parametersToQueryParameters(
+  static Map<String, Object>? parametersToBehavior(
     PlayerParameters args,
   ) {
-    final queryParameters = {
-      if (args.autoplay != null) 'autoplay': '${args.autoplay}',
+    final behaviorMap = {
+      if (args.autoplay != null) 'autoPlay': '${args.autoplay}',
       if (args.muted != null) 'muted': '${args.muted}',
+      if (args.loop != null) 'loop': '${args.loop}',
     };
 
-    return queryParameters.isNotEmpty ? queryParameters : null;
+    return behaviorMap.isNotEmpty ? behaviorMap : null;
   }
 }
