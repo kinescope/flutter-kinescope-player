@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.1
+
+* Added parameter `userAgent` for able override default UserAgent.
+
 ## 0.1.0
 
 * Added `KinescopePlayerController` with stream providing `KinescopePlayerStatus` and some methods to control video playback.
