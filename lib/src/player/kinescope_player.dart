@@ -125,8 +125,8 @@ class _KinescopePlayerState extends State<KinescopePlayer> {
             supportZoom: false,
             userAgent: widget.controller.parameters.userAgent ??
                 (Platform.isIOS
-                    ? 'Mozilla/5.0 (iPad; CPU iPhone OS 13_2 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko)'
-                    : ''),
+                    ? 'Mozilla/5.0 (iPad; CPU iPhone OS 13_2 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) KinescopePlayerFlutter/0.1.1'
+                    : 'Mozilla/5.0 (Android 9.0; Mobile; rv:59.0) Gecko/59.0 Firefox/59.0 KinescopePlayerFlutter/0.1.1'),
           ),
           android: AndroidInAppWebViewOptions(
             useHybridComposition: true,
@@ -257,7 +257,7 @@ class _KinescopePlayerState extends State<KinescopePlayer> {
             if (kinescopePlayer != null)
               kinescopePlayer.setVolume(value);
         }
-        
+
         function mute() {
             if (kinescopePlayer != null)
               kinescopePlayer.mute();
