@@ -26,9 +26,13 @@ class PlayerParameters {
   /// Restart the video automatically after it's ended.
   final bool? loop;
 
+  /// Sets the user-agent.
+  final String? userAgent;
+
   const PlayerParameters({
     this.autoplay,
     this.muted,
     this.loop,
+    this.userAgent,
   });
 }

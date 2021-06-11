@@ -53,6 +53,7 @@ Parameter                  | Description
 autoplay                   | Specifies whether the initial video will automatically start to play when the player loads. **Default = false**
 muted                      | Mutes the player. **Default = true**
 loop                       | Restart the video automatically after it's ended.
+userAgent                  | Overrides default UserAgent
 
 For a more detailed usage example, go to [example](./example/lib/main.dart).
 
@@ -62,7 +63,7 @@ Add `flutter_kinescope_sdk` to your `pubspec.yaml` file:
 
 ```yaml
 dependencies:
-  flutter_kinescope_sdk: ^0.1.0
+  flutter_kinescope_sdk: ^0.1.1
 ```
 
 ## Changelog

@@ -123,9 +123,10 @@ class _KinescopePlayerState extends State<KinescopePlayer> {
             transparentBackground: true,
             disableContextMenu: true,
             supportZoom: false,
-            userAgent: Platform.isIOS
-                ? 'Mozilla/5.0 (iPad; CPU iPhone OS 13_2 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko)'
-                : '',
+            userAgent: widget.controller.parameters.userAgent ??
+                (Platform.isIOS
+                    ? 'Mozilla/5.0 (iPad; CPU iPhone OS 13_2 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko)'
+                    : ''),
           ),
           android: AndroidInAppWebViewOptions(
             useHybridComposition: true,
