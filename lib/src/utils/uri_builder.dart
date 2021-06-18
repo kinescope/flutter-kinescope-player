@@ -31,9 +31,21 @@ class UriBuilder {
     PlayerParameters args,
   ) {
     final behaviorMap = {
-      if (args.autoplay != null) 'autoPlay': '${args.autoplay}',
-      if (args.muted != null) 'muted': '${args.muted}',
-      if (args.loop != null) 'loop': '${args.loop}',
+      if (args.autofocus != null)   'autofocus':   '${args.autofocus}',
+      if (args.autoplay != null)    'autoplay':    '${args.autoplay}',
+      if (args.autopause != null)   'autopause':   '${args.autopause}',
+      if (args.muted != null)       'muted':       '${args.muted}',
+      if (args.loop != null)        'loop':        '${args.loop}',
+      if (args.playsinline != null) 'playsinline': '${args.playsinline}',
+      if (args.preload != null)     'preload':     '${args.preload}',
+      if (args.texttrack != null)   'texttrack':   '${args.texttrack}',
+      if (args.dnt != null)         'dnt':         '${args.dnt}',
+      if (args.background != null)  'background':  '${args.background}',
+      if (args.t != null)           't':           '${args.t}',
+      if (args.transparent != null) 'transparent': '${args.transparent}',
+      if (args.speedbtn != null)    'speedbtn':    '${args.speedbtn}',
+      if (args.header != null)      'header':      '${args.header}',
+      if (args.controls != null)    'controls':    '${args.controls}',
     };
 
     return behaviorMap.isNotEmpty ? behaviorMap : null;

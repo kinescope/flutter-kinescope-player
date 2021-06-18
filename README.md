@@ -8,8 +8,8 @@ This package supports Android and iOS and uses [flutter_inappwebview](https://pu
 
 ## Requirements
 
-* **Android:** `minSdkVersion 17` and add support for `androidx` (see [AndroidX Migration](https://flutter.dev/docs/development/androidx-migration))
-* **iOS:** `--ios-language swift`, Xcode version >= 11
+- **Android:** `minSdkVersion 17` and add support for `androidx` (see [AndroidX Migration](https://flutter.dev/docs/development/androidx-migration))
+- **iOS:** `--ios-language swift`, Xcode version >= 11
 
 ## Usage
 
@@ -31,29 +31,43 @@ KinescopePlayer(
 
 Methods available for `KinescopePlayerController`.
 
-Method                                              | Description
-------------                                        | ---------------
-play()                                              | Plays the currently cued/loaded video.
-pause()                                             | Pauses the currently playing video.
-stop()                                              | Stops and cancels loading of the current video.
-load(String videoId)                                | Loads and plays the specified video.
-getCurrentTime()                                    | Returns current position.
-getDuration()                                       | Returns duration of video.
-seekTo(Duration position)                           | Seeks to a specified time in the video.
-mute()                                              | Mutes the player.
-ummute()                                            | Unmutes the player.
-setVolume(double volume)                            | Sets the volume of player. Works only on Android.
+| Method                    | Description                                       |
+| ------------------------- | ------------------------------------------------- |
+| play()                    | Plays the currently cued/loaded video.            |
+| pause()                   | Pauses the currently playing video.               |
+| stop()                    | Stops and cancels loading of the current video.   |
+| load(String videoId)      | Loads and plays the specified video.              |
+| getCurrentTime()          | Returns current position.                         |
+| getDuration()             | Returns duration of video.                        |
+| seekTo(Duration position) | Seeks to a specified time in the video.           |
+| mute()                    | Mutes the player.                                 |
+| ummute()                  | Unmutes the player.                               |
+| setVolume(double volume)  | Sets the volume of player. Works only on Android. |
 
 ### PlayerParameters
 
 You can set initial Kinescope player parameters using PlayerParameters.
 
-Parameter                  | Description
-------------               | ---------------
-autoplay                   | Specifies whether the initial video will automatically start to play when the player loads. **Default = false**
-muted                      | Mutes the player. **Default = true**
-loop                       | Restart the video automatically after it's ended.
-userAgent                  | Overrides default UserAgent
+| Parameter   | Description                                                                                                     |
+| ----------- | --------------------------------------------------------------------------------------------------------------- |
+| autoplay    | Specifies whether the initial video will automatically start to play when the player loads. **Default = false** |
+| muted       | Mutes the player. **Default = true**                                                                            |
+| loop        | Restart the video automatically after it's ended.                                                               |
+| userAgent   | Overrides default UserAgent                                                                                     |
+| externalId  | Any string that represents a user on an external system. It's used in analytics. **Default = ''**               |
+| autofocus   | Set focus to player. **Default = true**                                                                         |
+| autoplay    | Start playback on load. **Default = true**                                                                      |
+| muted       |
+| playsinline | Play video without full screen.                                                                                 |
+| preload     | Preload video metadata. **Default = true**                                                                      |
+| texttrack   | Enable subtitles on load.                                                                                       |
+| dnt         | Disable sent analytics.                                                                                         |
+| background  | Disable any controls. Set **autoplay**, **muted**, **loop** to **true**                                         |
+| t           | Seek the video to the time.                                                                                     |
+| transparent | Transparent background color.                                                                                   |
+| speedbtn    | Visibility the playback rate button.                                                                            |
+| header      | Visibility header                                                                                               |
+| controls    | Visibility controls.                                                                                            |
 
 For a more detailed usage example, go to [example](./example/lib/main.dart).
 
@@ -63,7 +77,7 @@ Add `flutter_kinescope_sdk` to your `pubspec.yaml` file:
 
 ```yaml
 dependencies:
-  flutter_kinescope_sdk: ^0.1.1
+  flutter_kinescope_sdk: ^0.1.2
 ```
 
 ## Changelog

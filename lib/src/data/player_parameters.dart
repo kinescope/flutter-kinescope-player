@@ -15,24 +15,45 @@
 import 'package:flutter/foundation.dart';
 
 /// Initial Kinescope player parameters
+/// see https://player.kinescope.io/latest/docs/iframe/IframeRegular.html
 @immutable
 class PlayerParameters {
-  /// Start the video automatically after loading the player.
+  final bool? autofocus;
   final bool? autoplay;
-
-  /// Whether the sound is turned on at the time of initials.
+  final bool? autopause;
   final bool? muted;
-
-  /// Restart the video automatically after it's ended.
   final bool? loop;
-
+  final bool? playsinline;
+  final bool? preload;
+  final bool? texttrack;
+  final bool? dnt;
+  final bool? background;
+  final int?  t;
+  final bool? transparent;
+  final bool? speedbtn;
+  final bool? header;
+  final bool? controls;
   /// Sets the user-agent.
   final String? userAgent;
+  final String? externalId;
 
   const PlayerParameters({
+    this.autofocus,
     this.autoplay,
+    this.autopause,
     this.muted,
     this.loop,
+    this.playsinline,
+    this.preload,
+    this.texttrack,
+    this.dnt,
+    this.background,
+    this.t,
+    this.transparent,
+    this.speedbtn,
+    this.header,
+    this.controls,
     this.userAgent,
+    this.externalId,
   });
 }

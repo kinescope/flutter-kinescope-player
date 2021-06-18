@@ -59,11 +59,12 @@ class KinescopePlayer extends StatefulWidget {
 
 class _KinescopePlayerState extends State<KinescopePlayer> {
   late String videoId;
-
+  late String externalId;
   @override
   void initState() {
     super.initState();
     videoId = widget.controller.videoId;
+    externalId = widget.controller.parameters.externalId ?? '';
   }
 
   @override
@@ -126,7 +127,7 @@ class _KinescopePlayerState extends State<KinescopePlayer> {
             userAgent: widget.controller.parameters.userAgent ??
                 (Platform.isIOS
                     ? 'Mozilla/5.0 (iPad; CPU iPhone OS 13_2 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) KinescopePlayerFlutter/0.1.1'
-                    : 'Mozilla/5.0 (Android 9.0; Mobile; rv:59.0) Gecko/59.0 Firefox/59.0 KinescopePlayerFlutter/0.1.1'),
+                    : 'Mozilla/5.0 (Android 9.0; Mobile; rv:59.0) Gecko/59.0 Firefox/59.0 KinescopePlayerFlutter/0.1.2'),
           ),
           android: AndroidInAppWebViewOptions(
             useHybridComposition: true,
@@ -200,6 +201,9 @@ class _KinescopePlayerState extends State<KinescopePlayer> {
                     .create('player', {
                         url: videoUri,
                         size: { width: '100%', height: '100%' },
+                        settings: {
+                          externalId: '${externalId}'
+                        },
                         behaviour: ${UriBuilder.parametersToBehavior(widget.controller.parameters)}
                     })
                     .then(function (player) {
