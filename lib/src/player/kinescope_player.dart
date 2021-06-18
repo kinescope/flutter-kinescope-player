@@ -59,11 +59,12 @@ class KinescopePlayer extends StatefulWidget {
 
 class _KinescopePlayerState extends State<KinescopePlayer> {
   late String videoId;
-
+  late String externalId;
   @override
   void initState() {
     super.initState();
     videoId = widget.controller.videoId;
+    externalId = widget.controller.parameters.externalId ?? '';
   }
 
   @override
@@ -200,6 +201,9 @@ class _KinescopePlayerState extends State<KinescopePlayer> {
                     .create('player', {
                         url: videoUri,
                         size: { width: '100%', height: '100%' },
+                        settings: {
+                          externalId: '${externalId}'
+                        },
                         behaviour: ${UriBuilder.parametersToBehavior(widget.controller.parameters)}
                     })
                     .then(function (player) {

@@ -45,7 +45,7 @@ void main() {
         expect(
           UriBuilder.parametersToBehavior(params),
           equals(
-            {'autoPlay': 'true', 'muted': 'true', 'loop': 'true'},
+            {'autoplay': 'true', 'muted': 'true', 'loop': 'true'},
           ),
         );
       });
