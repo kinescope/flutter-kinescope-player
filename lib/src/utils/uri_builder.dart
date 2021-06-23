@@ -27,25 +27,40 @@ class UriBuilder {
         pathSegments: [videoId],
       );
 
+  static int? parameterSeekTo(
+    PlayerParameters args,
+  ) {
+    return (args.t != null) ? args.t : 0;
+  }
+
+  static Map<String, Object>? parametersToUI(
+    PlayerParameters args,
+  ) {
+    final uiMap = {
+      // if (args.t != null) 't': '${args.t}',
+      if (args.header != null) 'header': '${args.header}',
+      if (args.transparent != null) 'transparent': '${args.transparent}',
+      if (args.speedbtn != null) 'playbackRateButton': '${args.speedbtn}',
+      if (args.controls != null) 'controls': '${args.controls}',
+    };
+
+    return uiMap.isNotEmpty ? uiMap : null;
+  }
+
   static Map<String, Object>? parametersToBehavior(
     PlayerParameters args,
   ) {
     final behaviorMap = {
-      if (args.autofocus != null)   'autofocus':   '${args.autofocus}',
-      if (args.autoplay != null)    'autoplay':    '${args.autoplay}',
-      if (args.autopause != null)   'autopause':   '${args.autopause}',
-      if (args.muted != null)       'muted':       '${args.muted}',
-      if (args.loop != null)        'loop':        '${args.loop}',
-      if (args.playsinline != null) 'playsinline': '${args.playsinline}',
-      if (args.preload != null)     'preload':     '${args.preload}',
-      if (args.texttrack != null)   'texttrack':   '${args.texttrack}',
-      if (args.dnt != null)         'dnt':         '${args.dnt}',
-      if (args.background != null)  'background':  '${args.background}',
-      if (args.t != null)           't':           '${args.t}',
-      if (args.transparent != null) 'transparent': '${args.transparent}',
-      if (args.speedbtn != null)    'speedbtn':    '${args.speedbtn}',
-      if (args.header != null)      'header':      '${args.header}',
-      if (args.controls != null)    'controls':    '${args.controls}',
+      if (args.autofocus != null) 'autoFocus': '${args.autofocus}',
+      if (args.autoplay != null) 'autoPlay': '${args.autoplay}',
+      if (args.autopause != null) 'autoPause': '${args.autopause}',
+      if (args.muted != null) 'muted': '${args.muted}',
+      if (args.loop != null) 'loop': '${args.loop}',
+      if (args.playsinline != null) 'playsInline': '${args.playsinline}',
+      if (args.preload != null) 'preload': '${args.preload}',
+      if (args.texttrack != null) 'textTrack': '${args.texttrack}',
+      if (args.dnt != null) 'doNotTrack': '${args.dnt}',
+      if (args.background != null) 'background': '${args.background}',
     };
 
     return behaviorMap.isNotEmpty ? behaviorMap : null;

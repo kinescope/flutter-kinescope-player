@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.3
+
+- Update player parameters.
+
 ## 0.1.2
 
 - Added more player parameters.

@@ -15,7 +15,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_kinescope_sdk/flutter_kinescope_sdk.dart';
 
-const _initialVideoId = 'kzNymAg8mku4MoxvMEMmCX';
+const _initialVideoId = 'sEsxJQ7Hi4QLWwbmZEFfgz';
 
 void main() {
   runApp(const MyApp());
@@ -53,9 +53,12 @@ class _HomePageState extends State<HomePage> {
     _kinescopeController = KinescopePlayerController(
       _initialVideoId,
       parameters: const PlayerParameters(
-        autoplay: true,
-        muted: false,
-        loop: true,
+        //autoplay: true,
+        //header: false,
+        //muted: true,
+        //loop: true,
+        background: true,
+        t: 20,
       ),
     );
   }
