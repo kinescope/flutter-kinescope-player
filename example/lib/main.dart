@@ -53,11 +53,16 @@ class _HomePageState extends State<HomePage> {
     _kinescopeController = KinescopePlayerController(
       _initialVideoId,
       parameters: const PlayerParameters(
-        //autoplay: true,
-        //header: false,
-        //muted: true,
-        //loop: true,
-        background: true,
+        // autoplay: true,
+        // header: false,
+        // muted: true,
+        // loop: true,
+        // background: true,
+        // disableFiles: true,
+        // watermark: WatermarkParameters(
+        //   mode: 'random',
+        //   text: 'water-text',
+        // ),
         t: 20,
       ),
     );
