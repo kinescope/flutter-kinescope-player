@@ -48,26 +48,27 @@ Methods available for `KinescopePlayerController`.
 
 You can set initial Kinescope player parameters using PlayerParameters.
 
-| Parameter   | Description                                                                                                     |
-| ----------- | --------------------------------------------------------------------------------------------------------------- |
-| autoplay    | Specifies whether the initial video will automatically start to play when the player loads. **Default = false** |
-| muted       | Mutes the player. **Default = true**                                                                            |
-| loop        | Restart the video automatically after it's ended.                                                               |
-| userAgent   | Overrides default UserAgent                                                                                     |
-| externalId  | Any string that represents a user on an external system. It's used in analytics. **Default = ''**               |
-| autofocus   | Set focus to player. **Default = true**                                                                         |
-| autoplay    | Start playback on load. **Default = true**                                                                      |
-| muted       |
-| playsinline | Play video without full screen.                                                                                 |
-| preload     | Preload video metadata. **Default = true**                                                                      |
-| texttrack   | Enable subtitles on load.                                                                                       |
-| dnt         | Disable sent analytics.                                                                                         |
-| background  | Disable any controls. Set **autoplay**, **muted**, **loop** to **true**                                         |
-| t           | Seek the video to the time.                                                                                     |
-| transparent | Transparent background color.                                                                                   |
-| speedbtn    | Visibility the playback rate button.                                                                            |
-| header      | Visibility header                                                                                               |
-| controls    | Visibility controls.                                                                                            |
+| Parameter    | Description                                                                                                     |
+| ------------ | --------------------------------------------------------------------------------------------------------------- |
+| autoplay     | Specifies whether the initial video will automatically start to play when the player loads. **Default = false** |
+| muted        | Mutes the player. **Default = true**                                                                            |
+| loop         | Restart the video automatically after it's ended.                                                               |
+| userAgent    | Overrides default UserAgent                                                                                     |
+| externalId   | Any string that represents a user on an external system. It's used in analytics. **Default = ''**               |
+| autofocus    | Set focus to player. **Default = true**                                                                         |
+| autoplay     | Start playback on load. **Default = true**                                                                      |
+| playsinline  | Play video without full screen.                                                                                 |
+| preload      | Preload video metadata. **Default = true**                                                                      |
+| texttrack    | Enable subtitles on load                                                                                        |
+| dnt          | Disable sent analytics                                                                                          |
+| background   | Disable any controls. Set **autoplay**, **muted**, **loop** to **true**                                         |
+| t            | Seek the video to the time                                                                                      |
+| transparent  | Transparent background color                                                                                    |
+| speedbtn     | Visibility the playback rate button                                                                             |
+| header       | Visibility header                                                                                               |
+| controls     | Visibility controls                                                                                             |
+| disableFiles | Hide additional materials                                                                                       |
+| watermark    | Set watermark                                                                                                   |
 
 For a more detailed usage example, go to [example](./example/lib/main.dart).
 
@@ -77,7 +78,7 @@ Add `flutter_kinescope_sdk` to your `pubspec.yaml` file:
 
 ```yaml
 dependencies:
-  flutter_kinescope_sdk: ^0.1.2
+  flutter_kinescope_sdk: ^0.1.4
 ```
 
 ## Changelog

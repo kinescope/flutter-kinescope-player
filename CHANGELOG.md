@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.4
+
+- Add player parameters: `disableFiles`, `watermark`
+
 ## 0.1.3
 
 - Update player parameters.

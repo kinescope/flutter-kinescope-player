@@ -28,11 +28,14 @@ class PlayerParameters {
   final bool? texttrack;
   final bool? dnt;
   final bool? background;
-  final int?  t;
+  final int? t;
   final bool? transparent;
   final bool? speedbtn;
   final bool? header;
   final bool? controls;
+  final bool? disableFiles;
+  final WatermarkParameters watermark;
+
   /// Sets the user-agent.
   final String? userAgent;
   final String? externalId;
@@ -55,5 +58,13 @@ class PlayerParameters {
     this.controls,
     this.userAgent,
     this.externalId,
+    this.disableFiles,
+    this.watermark = const WatermarkParameters(),
   });
+}
+
+class WatermarkParameters {
+  final String? mode;
+  final String? text;
+  const WatermarkParameters({this.mode, this.text});
 }
