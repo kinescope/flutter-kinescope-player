@@ -117,25 +117,19 @@ class _KinescopePlayerState extends State<KinescopePlayer> {
               },
             );
         },
-        initialOptions: InAppWebViewGroupOptions(
-          crossPlatform: InAppWebViewOptions(
-            useShouldOverrideUrlLoading: true,
-            mediaPlaybackRequiresUserGesture: false,
-            transparentBackground: true,
-            disableContextMenu: true,
-            supportZoom: false,
-            userAgent: widget.controller.parameters.userAgent ??
-                (Platform.isIOS
-                    ? 'Mozilla/5.0 (iPad; CPU iPhone OS 13_2 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) KinescopePlayerFlutter/0.1.4'
-                    : 'Mozilla/5.0 (Android 9.0; Mobile; rv:59.0) Gecko/59.0 Firefox/59.0 KinescopePlayerFlutter/0.1.4'),
-          ),
-          android: AndroidInAppWebViewOptions(
-            useHybridComposition: true,
-          ),
-          ios: IOSInAppWebViewOptions(
-            allowsInlineMediaPlayback: true,
-            allowsBackForwardNavigationGestures: false,
-          ),
+        initialSettings: InAppWebViewSettings(
+          useShouldOverrideUrlLoading: true,
+          mediaPlaybackRequiresUserGesture: false,
+          transparentBackground: true,
+          disableContextMenu: true,
+          supportZoom: false,
+          userAgent: widget.controller.parameters.userAgent ??
+            (Platform.isIOS
+              ? 'Mozilla/5.0 (iPad; CPU iPhone OS 13_2 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) KinescopePlayerFlutter/0.1.4'
+              : 'Mozilla/5.0 (Android 9.0; Mobile; rv:59.0) Gecko/59.0 Firefox/59.0 KinescopePlayerFlutter/0.1.4'),
+          useHybridComposition: true,
+          allowsInlineMediaPlayback: true,
+          allowsBackForwardNavigationGestures: false,
         ),
         iosOnNavigationResponse: (_, __) async {
           return IOSNavigationResponseAction.CANCEL;
