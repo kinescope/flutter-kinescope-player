@@ -14,6 +14,7 @@
 
 import 'dart:io';
 
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/widgets.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 
@@ -123,10 +124,7 @@ class _KinescopePlayerState extends State<KinescopePlayer> {
           transparentBackground: true,
           disableContextMenu: true,
           supportZoom: false,
-          userAgent: widget.controller.parameters.userAgent ??
-            (Platform.isIOS
-              ? 'Mozilla/5.0 (iPad; CPU iPhone OS 13_2 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) KinescopePlayerFlutter/0.1.4'
-              : 'Mozilla/5.0 (Android 9.0; Mobile; rv:59.0) Gecko/59.0 Firefox/59.0 KinescopePlayerFlutter/0.1.4'),
+          userAgent: widget.controller.parameters.userAgent ?? getUserArgent(),
           useHybridComposition: true,
           allowsInlineMediaPlayback: true,
           allowsBackForwardNavigationGestures: false,
@@ -143,6 +141,16 @@ class _KinescopePlayerState extends State<KinescopePlayer> {
         initialData: InAppWebViewInitialData(data: _player),
       ),
     );
+  }
+
+  String? getUserArgent() {
+    if (kIsWeb) {
+      return null;
+    }
+
+    return (Platform.isIOS
+        ? 'Mozilla/5.0 (iPad; CPU iPhone OS 13_2 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) KinescopePlayerFlutter/0.1.4'
+        : 'Mozilla/5.0 (Android 9.0; Mobile; rv:59.0) Gecko/59.0 Firefox/59.0 KinescopePlayerFlutter/0.1.4');
   }
 
   // ignore: member-ordering-extended
