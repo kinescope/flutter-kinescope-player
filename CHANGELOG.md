@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.1.5
+
+- update flutter_inappwebview 6
+- fix build web
+
 ## 0.1.4
 
 - Add player parameters: `disableFiles`, `watermark`
