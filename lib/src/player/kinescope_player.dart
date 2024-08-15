@@ -61,11 +61,13 @@ class KinescopePlayer extends StatefulWidget {
 class _KinescopePlayerState extends State<KinescopePlayer> {
   late String videoId;
   late String externalId;
+  late String baseUrl;
   @override
   void initState() {
     super.initState();
     videoId = widget.controller.videoId;
     externalId = widget.controller.parameters.externalId ?? '';
+    baseUrl = widget.controller.parameters.baseUrl ?? 'https://kinescope.io';
   }
 
   @override
@@ -129,6 +131,12 @@ class _KinescopePlayerState extends State<KinescopePlayer> {
           allowsInlineMediaPlayback: true,
           allowsBackForwardNavigationGestures: false,
         ),
+        onPermissionRequest: (controller, permissionRequest) async {
+          return PermissionResponse(
+            resources: [PermissionResourceType.PROTECTED_MEDIA_ID],
+            action: PermissionResponseAction.GRANT,
+          );
+        },
         iosOnNavigationResponse: (_, __) async {
           return IOSNavigationResponseAction.CANCEL;
         },
@@ -138,7 +146,10 @@ class _KinescopePlayerState extends State<KinescopePlayer> {
         onConsoleMessage: (_, message) {
           debugPrint('js: ${message.message}');
         },
-        initialData: InAppWebViewInitialData(data: _player),
+        initialData: InAppWebViewInitialData(
+          data: _player,
+          baseUrl: WebUri(baseUrl),
+        ),
       ),
     );
   }

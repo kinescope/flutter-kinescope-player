@@ -39,6 +39,7 @@ class PlayerParameters {
   /// Sets the user-agent.
   final String? userAgent;
   final String? externalId;
+  final String? baseUrl;
 
   const PlayerParameters({
     this.autofocus,
@@ -58,6 +59,7 @@ class PlayerParameters {
     this.controls,
     this.userAgent,
     this.externalId,
+    this.baseUrl,
     this.disableFiles,
     this.watermark = const WatermarkParameters(),
   });
