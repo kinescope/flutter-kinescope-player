@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.1.6
+
+- Android PROTECTED_MEDIA_ID
+- Add player parameters: `baseUrl`
+
 ## 0.1.5
 
 - update flutter_inappwebview 6
