@@ -43,11 +43,10 @@ class UriBuilder {
       if (args.speedbtn != null) 'playbackRateButton': '${args.speedbtn}',
       if (args.controls != null) 'controls': '${args.controls}',
       if (args.disableFiles != null) 'disableFiles': '${args.disableFiles}',
-      if (args.watermark != null)
-        'watermark': {
-          if (args.watermark.mode != null) 'mode': '"${args.watermark.mode}"',
-          if (args.watermark.text != null) 'text': '"${args.watermark.text}"',
-        },
+      'watermark': {
+        if (args.watermark.mode != null) 'mode': '"${args.watermark.mode}"',
+        if (args.watermark.text != null) 'text': '"${args.watermark.text}"',
+      },
     };
 
     return uiMap.isNotEmpty ? uiMap : null;
