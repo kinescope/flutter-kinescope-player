@@ -49,10 +49,10 @@ class KinescopePlayer extends StatefulWidget {
 
   /// A widget to play Kinescope videos.
   const KinescopePlayer({
-    Key? key,
+    super.key,
     required this.controller,
     this.aspectRatio = 16 / 9,
-  }) : super(key: key);
+  });
 
   @override
   _KinescopePlayerState createState() => _KinescopePlayerState();
@@ -136,9 +136,6 @@ class _KinescopePlayerState extends State<KinescopePlayer> {
             resources: [PermissionResourceType.PROTECTED_MEDIA_ID],
             action: PermissionResponseAction.GRANT,
           );
-        },
-        onNavigationResponse: (_, __) async {
-          return NavigationResponseAction.CANCEL;
         },
         shouldOverrideUrlLoading: (_, __) async => Platform.isIOS
             ? NavigationActionPolicy.ALLOW

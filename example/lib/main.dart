@@ -205,29 +205,28 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<void> _rewindBackward() async {
-    final _currentTime = await _kinescopeController.getCurrentTime();
+    final currentTime = await _kinescopeController.getCurrentTime();
 
-    final _duration = Duration(
-      seconds:
-          _currentTime.inSeconds - 10 > 0 ? _currentTime.inSeconds - 10 : 0,
+    final duration = Duration(
+      seconds: currentTime.inSeconds - 10 > 0 ? currentTime.inSeconds - 10 : 0,
     );
 
-    _kinescopeController.seekTo(_duration);
+    _kinescopeController.seekTo(duration);
   }
 
   Future<void> _rewindForward() async {
-    final _currentTime = await _kinescopeController.getCurrentTime();
+    final currentTime = await _kinescopeController.getCurrentTime();
 
     _kinescopeController.seekTo(
-      _currentTime + const Duration(seconds: 10),
+      currentTime + const Duration(seconds: 10),
     );
   }
 
   Future<void> _seekToCenter() async {
-    final _duration = await _kinescopeController.getDuration();
+    final duration = await _kinescopeController.getDuration();
     _kinescopeController.seekTo(
       Duration(
-        seconds: _duration.inSeconds ~/ 2,
+        seconds: duration.inSeconds ~/ 2,
       ),
     );
   }
