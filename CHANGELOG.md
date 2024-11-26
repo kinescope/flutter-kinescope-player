@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.9
+
+- fix ios
+
 ## 0.1.8
 
 - update web html
