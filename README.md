@@ -78,7 +78,7 @@ Add `flutter_kinescope_sdk` to your `pubspec.yaml` file:
 
 ```yaml
 dependencies:
-  flutter_kinescope_sdk: ^0.1.9
+  flutter_kinescope_sdk: ^0.1.10
 ```
 
 ## Changelog
