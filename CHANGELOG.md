@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.10
+
+- fix live seek
+
 ## 0.1.9
 
 - fix ios
