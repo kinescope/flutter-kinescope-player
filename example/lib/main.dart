@@ -59,11 +59,11 @@ class _HomePageState extends State<HomePage> {
         // loop: true,
         // background: true,
         // disableFiles: true,
-        // watermark: WatermarkParameters(
-        //   mode: 'random',
-        //   text: 'water-text',
-        // ),
-        t: 20,
+        watermark: WatermarkParameters(
+          mode: 'random',
+          text: 'water-text',
+        ),
+        // t: 20,
       ),
     );
   }

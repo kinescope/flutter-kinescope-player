@@ -22,6 +22,9 @@ import '../data/player_status.dart';
 import '../kinescope_player_controller.dart';
 import '../utils/uri_builder.dart';
 
+const _scheme = 'https';
+const _kinescopeUri = 'kinescope.io';
+
 /// A widget to play or stream Kinescope videos using the official embedded API
 ///
 /// Using [KinescopePlayer] widget:
@@ -68,7 +71,11 @@ class _KinescopePlayerState extends State<KinescopePlayer> {
     super.initState();
     videoId = widget.controller.videoId;
     externalId = widget.controller.parameters.externalId ?? '';
-    baseUrl = widget.controller.parameters.baseUrl ?? 'https://kinescope.io';
+    baseUrl = widget.controller.parameters.baseUrl ??
+        Uri(
+          scheme: _scheme,
+          host: _kinescopeUri,
+        ).toString();
   }
 
   @override
@@ -137,6 +144,12 @@ class _KinescopePlayerState extends State<KinescopePlayer> {
             action: PermissionResponseAction.GRANT,
           );
         },
+        onNavigationResponse: (_, navigationResponse) async {
+          if (navigationResponse.response!.url!.host == _kinescopeUri) {
+            return NavigationResponseAction.ALLOW;
+          }
+          return NavigationResponseAction.CANCEL;
+        },
         shouldOverrideUrlLoading: (_, __) async => Platform.isIOS
             ? NavigationActionPolicy.ALLOW
             : NavigationActionPolicy.CANCEL,
@@ -170,6 +183,12 @@ class _KinescopePlayerState extends State<KinescopePlayer> {
     <meta charset="utf-8" />
     <meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no'>
     <style>
+        html, body {
+            padding: 0;
+            margin: 0;
+            width: 100%;
+            height: 100%;
+        }
         #player {
             position: fixed;
             width: 100%;
@@ -220,7 +239,10 @@ class _KinescopePlayerState extends State<KinescopePlayer> {
                     .then(function (player) {
                         kinescopePlayer = player;
                         player.once(player.Events.Ready, function (event) {
-                          event.target.seekTo(${UriBuilder.parameterSeekTo(widget.controller.parameters)});
+                          var time = ${UriBuilder.parameterSeekTo(widget.controller.parameters)};
+                          if(time > 0 || time === 0) {
+                             event.target.seekTo(time);
+                          }
                         });
                         player.on(player.Events.Ready, function (event) { window.flutter_inappwebview.callHandler('events', 'ready'); });
                         player.on(player.Events.Playing, function (event) { window.flutter_inappwebview.callHandler('events', 'playing'); });

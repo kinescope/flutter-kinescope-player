@@ -30,7 +30,7 @@ class UriBuilder {
   static int? parameterSeekTo(
     PlayerParameters args,
   ) {
-    return (args.t != null) ? args.t : 0;
+    return args.t;
   }
 
   static Map<String, Object>? parametersToUI(
