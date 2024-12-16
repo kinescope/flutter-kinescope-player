@@ -16,7 +16,10 @@ import 'dart:io';
 
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/widgets.dart';
-import 'package:flutter_inappwebview/flutter_inappwebview.dart';
+
+import 'package:webview_flutter/webview_flutter.dart';
+import 'package:webview_flutter_android/webview_flutter_android.dart';
+import 'package:webview_flutter_wkwebview/webview_flutter_wkwebview.dart';
 
 import '../data/player_status.dart';
 import '../kinescope_player_controller.dart';
@@ -76,6 +79,68 @@ class _KinescopePlayerState extends State<KinescopePlayer> {
           scheme: _scheme,
           host: _kinescopeUri,
         ).toString();
+
+    late final PlatformWebViewControllerCreationParams params;
+    if (WebViewPlatform.instance is WebKitWebViewPlatform) {
+      params = WebKitWebViewControllerCreationParams(
+        allowsInlineMediaPlayback: true,
+        mediaTypesRequiringUserAction: const <PlaybackMediaTypes>{},
+      );
+    } else {
+      params = const PlatformWebViewControllerCreationParams();
+    }
+
+    final controller = WebViewController.fromPlatformCreationParams(params);
+
+    // ignore: cascade_invocations
+    controller
+      ..setJavaScriptMode(JavaScriptMode.unrestricted)
+      ..addJavaScriptChannel(
+        'Events',
+        onMessageReceived: (message) {
+          widget.controller.statusController.add(
+            KinescopePlayerStatus.values.firstWhere(
+              (value) => value.toString() == message.message,
+              orElse: () => KinescopePlayerStatus.unknown,
+            ),
+          );
+        },
+      )
+      ..addJavaScriptChannel(
+        'CurrentTime',
+        onMessageReceived: (message) {
+          final dynamic seconds = message.message;
+          if (seconds is num) {
+            widget.controller.getCurrentTimeCompleter?.complete(
+              Duration(milliseconds: (seconds * 1000).ceil()),
+            );
+          }
+        },
+      )
+      ..addJavaScriptChannel(
+        'Duration',
+        onMessageReceived: (message) {
+          final dynamic seconds = message.message;
+          if (seconds is num) {
+            widget.controller.getDurationCompleter?.complete(
+              Duration(milliseconds: (seconds * 1000).ceil()),
+            );
+          }
+        },
+      )
+      ..loadHtmlString(_player, baseUrl: baseUrl);
+
+    if (kIsWeb || !Platform.isMacOS) {
+      controller.setBackgroundColor(const Color(0x80000000));
+    }
+
+    if (controller.platform is AndroidWebViewController) {
+      AndroidWebViewController.enableDebugging(true);
+      (controller.platform as AndroidWebViewController)
+          .setMediaPlaybackRequiresUserGesture(false);
+    }
+
+    widget.controller.webViewController = controller;
   }
 
   @override
@@ -87,81 +152,85 @@ class _KinescopePlayerState extends State<KinescopePlayer> {
   @override
   Widget build(BuildContext context) {
     return AspectRatio(
-      aspectRatio: widget.aspectRatio,
-      child: InAppWebView(
-        onWebViewCreated: (controller) {
-          widget.controller.webViewController = controller;
-          controller
-            ..addJavaScriptHandler(
-              handlerName: 'events',
-              callback: (args) {
-                final event = (args.first as String).toLowerCase();
+        aspectRatio: widget.aspectRatio,
+        child: WebViewWidget(
+          controller: widget.controller.webViewController,
+        )
 
-                widget.controller.statusController.add(
-                  KinescopePlayerStatus.values.firstWhere(
-                    (value) => value.toString() == event,
-                    orElse: () => KinescopePlayerStatus.unknown,
-                  ),
-                );
-              },
-            )
-            ..addJavaScriptHandler(
-              handlerName: 'getCurrentTimeResult',
-              callback: (args) {
-                final dynamic seconds = args.first;
-                if (seconds is num) {
-                  widget.controller.getCurrentTimeCompleter?.complete(
-                    Duration(milliseconds: (seconds * 1000).ceil()),
-                  );
-                }
-              },
-            )
-            ..addJavaScriptHandler(
-              handlerName: 'getDurationResult',
-              callback: (args) {
-                final dynamic seconds = args.first;
-                if (seconds is num) {
-                  widget.controller.getDurationCompleter?.complete(
-                    Duration(milliseconds: (seconds * 1000).ceil()),
-                  );
-                }
-              },
-            );
-        },
-        initialSettings: InAppWebViewSettings(
-          useShouldOverrideUrlLoading: true,
-          mediaPlaybackRequiresUserGesture: false,
-          transparentBackground: true,
-          disableContextMenu: true,
-          supportZoom: false,
-          userAgent: widget.controller.parameters.userAgent ?? getUserArgent(),
-          allowsInlineMediaPlayback: true,
-          allowsBackForwardNavigationGestures: false,
-        ),
-        onPermissionRequest: (controller, permissionRequest) async {
-          return PermissionResponse(
-            resources: [PermissionResourceType.PROTECTED_MEDIA_ID],
-            action: PermissionResponseAction.GRANT,
-          );
-        },
-        onNavigationResponse: (_, navigationResponse) async {
-          if (navigationResponse.response!.url!.host == _kinescopeUri) {
-            return NavigationResponseAction.ALLOW;
-          }
-          return NavigationResponseAction.CANCEL;
-        },
-        shouldOverrideUrlLoading: (_, __) async => Platform.isIOS
-            ? NavigationActionPolicy.ALLOW
-            : NavigationActionPolicy.CANCEL,
-        onConsoleMessage: (_, message) {
-          debugPrint('js: ${message.message}');
-        },
-        initialData: InAppWebViewInitialData(
-          data: _player,
-          baseUrl: WebUri(baseUrl),
-        ),
-      ),
-    );
+        // child: InAppWebView(
+        //   onWebViewCreated: (controller) {
+        //     widget.controller.webViewController = controller;
+        //     controller
+        //       ..addJavaScriptHandler(
+        //         handlerName: 'events',
+        //         callback: (args) {
+        //           final event = (args.first as String).toLowerCase();
+
+        //           widget.controller.statusController.add(
+        //             KinescopePlayerStatus.values.firstWhere(
+        //               (value) => value.toString() == event,
+        //               orElse: () => KinescopePlayerStatus.unknown,
+        //             ),
+        //           );
+        //         },
+        //       )
+        //       ..addJavaScriptHandler(
+        //         handlerName: 'getCurrentTimeResult',
+        //         callback: (args) {
+        //           final dynamic seconds = args.first;
+        //           if (seconds is num) {
+        //             widget.controller.getCurrentTimeCompleter?.complete(
+        //               Duration(milliseconds: (seconds * 1000).ceil()),
+        //             );
+        //           }
+        //         },
+        //       )
+        //       ..addJavaScriptHandler(
+        //         handlerName: 'getDurationResult',
+        //         callback: (args) {
+        //           final dynamic seconds = args.first;
+        //           if (seconds is num) {
+        //             widget.controller.getDurationCompleter?.complete(
+        //               Duration(milliseconds: (seconds * 1000).ceil()),
+        //             );
+        //           }
+        //         },
+        //       );
+        //   },
+        //   initialSettings: InAppWebViewSettings(
+        //     useShouldOverrideUrlLoading: true,
+        //     mediaPlaybackRequiresUserGesture: false,
+        //     transparentBackground: true,
+        //     disableContextMenu: true,
+        //     supportZoom: false,
+        //     userAgent: widget.controller.parameters.userAgent ?? getUserArgent(),
+        //     allowsInlineMediaPlayback: true,
+        //     allowsBackForwardNavigationGestures: false,
+        //   ),
+        //   onPermissionRequest: (controller, permissionRequest) async {
+        //     return PermissionResponse(
+        //       resources: [PermissionResourceType.PROTECTED_MEDIA_ID],
+        //       action: PermissionResponseAction.GRANT,
+        //     );
+        //   },
+        //   onNavigationResponse: (_, navigationResponse) async {
+        //     if (navigationResponse.response!.url!.host == _kinescopeUri) {
+        //       return NavigationResponseAction.ALLOW;
+        //     }
+        //     return NavigationResponseAction.CANCEL;
+        //   },
+        //   shouldOverrideUrlLoading: (_, __) async => Platform.isIOS
+        //       ? NavigationActionPolicy.ALLOW
+        //       : NavigationActionPolicy.CANCEL,
+        //   onConsoleMessage: (_, message) {
+        //     debugPrint('js: ${message.message}');
+        //   },
+        //   initialData: InAppWebViewInitialData(
+        //     data: _player,
+        //     baseUrl: WebUri(baseUrl),
+        //   ),
+        // ),
+        );
   }
 
   String? getUserArgent() {
@@ -200,7 +269,7 @@ class _KinescopePlayerState extends State<KinescopePlayer> {
 
     <script>
         window.addEventListener("flutterInAppWebViewPlatformReady", function (event) {
-            window.flutter_inappwebview.callHandler('events', 'ready');
+            Events.postMessage('ready');
         });
 
         let kinescopePlayerFactory = null;
@@ -238,17 +307,19 @@ class _KinescopePlayerState extends State<KinescopePlayer> {
                     })
                     .then(function (player) {
                         kinescopePlayer = player;
+                        Events.postMessage('init');
+
                         player.once(player.Events.Ready, function (event) {
                           var time = ${UriBuilder.parameterSeekTo(widget.controller.parameters)};
                           if(time > 0 || time === 0) {
                              event.target.seekTo(time);
                           }
                         });
-                        player.on(player.Events.Ready, function (event) { window.flutter_inappwebview.callHandler('events', 'ready'); });
-                        player.on(player.Events.Playing, function (event) { window.flutter_inappwebview.callHandler('events', 'playing'); });
-                        player.on(player.Events.Waiting, function (event) { window.flutter_inappwebview.callHandler('events', 'waiting'); });
-                        player.on(player.Events.Pause, function (event) { window.flutter_inappwebview.callHandler('events', 'pause'); });
-                        player.on(player.Events.Ended, function (event) { window.flutter_inappwebview.callHandler('events', 'ended'); });
+                        player.on(player.Events.Ready, function (event) { Events.postMessage('ready'); });
+                        player.on(player.Events.Playing, function (event) { Events.postMessage('playing'); });
+                        player.on(player.Events.Waiting, function (event) { Events.postMessage('waiting'); });
+                        player.on(player.Events.Pause, function (event) { Events.postMessage( 'pause'); });
+                        player.on(player.Events.Ended, function (event) { Events.postMessage('ended'); });
                     });
             }
         }
@@ -281,14 +352,14 @@ class _KinescopePlayerState extends State<KinescopePlayer> {
         function getCurrentTime() {
             if (kinescopePlayer != null)
               kinescopePlayer.getCurrentTime().then((value) => {
-                window.flutter_inappwebview.callHandler('getCurrentTimeResult', value);
+                CurrentTime.postMessage(value);
               });
         }
 
         function getDuration() {
             if (kinescopePlayer != null)
               kinescopePlayer.getDuration().then((value) => {
-                window.flutter_inappwebview.callHandler('getDurationResult', value);
+                Duration.postMessage(value);
               });
         }
 
