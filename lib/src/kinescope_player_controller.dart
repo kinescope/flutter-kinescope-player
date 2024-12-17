@@ -18,7 +18,7 @@ import 'dart:async';
 import 'package:flutter_kinescope_sdk/src/data/player_parameters.dart';
 import 'package:flutter_kinescope_sdk/src/data/player_status.dart';
 import 'package:flutter_kinescope_sdk/src/utils/uri_builder.dart';
-import 'package:webview_flutter/webview_flutter.dart';
+import 'package:webview_flutter_platform_interface/webview_flutter_platform_interface.dart';
 
 /// Controls a Kinescope player, and provides status updates using [status] stream.
 ///
@@ -33,13 +33,13 @@ class KinescopePlayerController {
   final statusController = StreamController<KinescopePlayerStatus>();
 
   /// Controller to communicate with WebView.
-  late WebViewController _webViewController;
+  late PlatformWebViewController _webViewController;
 
   /// Controller to communicate with WebView.
-  WebViewController get webViewController => _webViewController;
+  PlatformWebViewController get webViewController => _webViewController;
 
   /// Controller to communicate with WebView.
-  set webViewController(WebViewController value) {
+  set webViewController(PlatformWebViewController value) {
     _webViewController = value;
   }
 

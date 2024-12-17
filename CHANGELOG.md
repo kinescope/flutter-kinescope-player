@@ -1,5 +1,10 @@
 # Changelog
 
+## next
+
+- change webview_flutter
+- remove web
+
 ## 0.1.10
 
 - fix live seek

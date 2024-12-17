@@ -13,12 +13,10 @@
 // limitations under the License.
 
 import 'dart:io';
-
-import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/widgets.dart';
 
-import 'package:webview_flutter/webview_flutter.dart';
 import 'package:webview_flutter_android/webview_flutter_android.dart';
+import 'package:webview_flutter_platform_interface/webview_flutter_platform_interface.dart';
 import 'package:webview_flutter_wkwebview/webview_flutter_wkwebview.dart';
 
 import '../data/player_status.dart';
@@ -81,6 +79,7 @@ class _KinescopePlayerState extends State<KinescopePlayer> {
         ).toString();
 
     late final PlatformWebViewControllerCreationParams params;
+
     if (WebViewPlatform.instance is WebKitWebViewPlatform) {
       params = WebKitWebViewControllerCreationParams(
         allowsInlineMediaPlayback: true,
@@ -90,13 +89,27 @@ class _KinescopePlayerState extends State<KinescopePlayer> {
       params = const PlatformWebViewControllerCreationParams();
     }
 
-    final controller = WebViewController.fromPlatformCreationParams(params);
+    final controller = PlatformWebViewController(params);
 
     // ignore: cascade_invocations
     controller
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
-      ..addJavaScriptChannel(
-        'Events',
+      ..setPlatformNavigationDelegate(PlatformNavigationDelegate(
+        const PlatformNavigationDelegateCreationParams(),
+      )
+        ..setOnNavigationRequest((request) {
+          if (request.url.contains(_kinescopeUri)) {
+            debugPrint('blocking navigation to ${request.url}');
+            return NavigationDecision.prevent;
+          }
+          debugPrint('allowing navigation to ${request.url}');
+          return NavigationDecision.navigate;
+        })
+        ..setOnUrlChange((change) {
+          debugPrint('url change to ${change.url}');
+        }))
+      ..addJavaScriptChannel(JavaScriptChannelParams(
+        name: 'Events',
         onMessageReceived: (message) {
           widget.controller.statusController.add(
             KinescopePlayerStatus.values.firstWhere(
@@ -105,39 +118,46 @@ class _KinescopePlayerState extends State<KinescopePlayer> {
             ),
           );
         },
-      )
-      ..addJavaScriptChannel(
-        'CurrentTime',
+      ))
+      ..addJavaScriptChannel(JavaScriptChannelParams(
+        name: 'CurrentTime',
         onMessageReceived: (message) {
-          final dynamic seconds = message.message;
+          final dynamic seconds = double.parse(message.message);
           if (seconds is num) {
             widget.controller.getCurrentTimeCompleter?.complete(
               Duration(milliseconds: (seconds * 1000).ceil()),
             );
           }
         },
-      )
-      ..addJavaScriptChannel(
-        'Duration',
+      ))
+      ..addJavaScriptChannel(JavaScriptChannelParams(
+        name: 'Duration',
         onMessageReceived: (message) {
-          final dynamic seconds = message.message;
+          final dynamic seconds = double.parse(message.message);
           if (seconds is num) {
             widget.controller.getDurationCompleter?.complete(
               Duration(milliseconds: (seconds * 1000).ceil()),
             );
           }
         },
+      ))
+      ..setOnPlatformPermissionRequest(
+        (request) {
+          debugPrint(
+            'requesting permissions for ${request.types.map((type) => type.name)}',
+          );
+          request.grant();
+        },
       )
+      ..setOnConsoleMessage((message) {
+        debugPrint('js: ${message.message}');
+      })
+      ..setUserAgent(getUserArgent())
       ..loadHtmlString(_player, baseUrl: baseUrl);
 
-    if (kIsWeb || !Platform.isMacOS) {
-      controller.setBackgroundColor(const Color(0x80000000));
-    }
-
-    if (controller.platform is AndroidWebViewController) {
+    if (controller is AndroidWebViewController) {
       AndroidWebViewController.enableDebugging(true);
-      (controller.platform as AndroidWebViewController)
-          .setMediaPlaybackRequiresUserGesture(false);
+      controller.setMediaPlaybackRequiresUserGesture(false);
     }
 
     widget.controller.webViewController = controller;
@@ -152,92 +172,15 @@ class _KinescopePlayerState extends State<KinescopePlayer> {
   @override
   Widget build(BuildContext context) {
     return AspectRatio(
-        aspectRatio: widget.aspectRatio,
-        child: WebViewWidget(
-          controller: widget.controller.webViewController,
-        )
-
-        // child: InAppWebView(
-        //   onWebViewCreated: (controller) {
-        //     widget.controller.webViewController = controller;
-        //     controller
-        //       ..addJavaScriptHandler(
-        //         handlerName: 'events',
-        //         callback: (args) {
-        //           final event = (args.first as String).toLowerCase();
-
-        //           widget.controller.statusController.add(
-        //             KinescopePlayerStatus.values.firstWhere(
-        //               (value) => value.toString() == event,
-        //               orElse: () => KinescopePlayerStatus.unknown,
-        //             ),
-        //           );
-        //         },
-        //       )
-        //       ..addJavaScriptHandler(
-        //         handlerName: 'getCurrentTimeResult',
-        //         callback: (args) {
-        //           final dynamic seconds = args.first;
-        //           if (seconds is num) {
-        //             widget.controller.getCurrentTimeCompleter?.complete(
-        //               Duration(milliseconds: (seconds * 1000).ceil()),
-        //             );
-        //           }
-        //         },
-        //       )
-        //       ..addJavaScriptHandler(
-        //         handlerName: 'getDurationResult',
-        //         callback: (args) {
-        //           final dynamic seconds = args.first;
-        //           if (seconds is num) {
-        //             widget.controller.getDurationCompleter?.complete(
-        //               Duration(milliseconds: (seconds * 1000).ceil()),
-        //             );
-        //           }
-        //         },
-        //       );
-        //   },
-        //   initialSettings: InAppWebViewSettings(
-        //     useShouldOverrideUrlLoading: true,
-        //     mediaPlaybackRequiresUserGesture: false,
-        //     transparentBackground: true,
-        //     disableContextMenu: true,
-        //     supportZoom: false,
-        //     userAgent: widget.controller.parameters.userAgent ?? getUserArgent(),
-        //     allowsInlineMediaPlayback: true,
-        //     allowsBackForwardNavigationGestures: false,
-        //   ),
-        //   onPermissionRequest: (controller, permissionRequest) async {
-        //     return PermissionResponse(
-        //       resources: [PermissionResourceType.PROTECTED_MEDIA_ID],
-        //       action: PermissionResponseAction.GRANT,
-        //     );
-        //   },
-        //   onNavigationResponse: (_, navigationResponse) async {
-        //     if (navigationResponse.response!.url!.host == _kinescopeUri) {
-        //       return NavigationResponseAction.ALLOW;
-        //     }
-        //     return NavigationResponseAction.CANCEL;
-        //   },
-        //   shouldOverrideUrlLoading: (_, __) async => Platform.isIOS
-        //       ? NavigationActionPolicy.ALLOW
-        //       : NavigationActionPolicy.CANCEL,
-        //   onConsoleMessage: (_, message) {
-        //     debugPrint('js: ${message.message}');
-        //   },
-        //   initialData: InAppWebViewInitialData(
-        //     data: _player,
-        //     baseUrl: WebUri(baseUrl),
-        //   ),
-        // ),
-        );
+      aspectRatio: widget.aspectRatio,
+      child: PlatformWebViewWidget(
+        PlatformWebViewWidgetCreationParams(
+            controller: widget.controller.webViewController),
+      ).build(context),
+    );
   }
 
   String? getUserArgent() {
-    if (kIsWeb) {
-      return null;
-    }
-
     return (Platform.isIOS
         ? 'Mozilla/5.0 (iPad; CPU iPhone OS 13_2 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) KinescopePlayerFlutter/10'
         : 'Mozilla/5.0 (Android 9.0; Mobile; rv:59.0) Gecko/59.0 Firefox/59.0 KinescopePlayerFlutter/0.1.10');
