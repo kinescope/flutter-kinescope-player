@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import 'dart:developer';
 import 'dart:io';
 
 import 'package:flutter/foundation.dart' show kIsWeb;
@@ -51,8 +50,11 @@ class KinescopePlayer extends StatefulWidget {
   /// by default it's 16 / 9.
   final double aspectRatio;
 
-  /// Fullscreen button
+  /// Enter Fullscreen callback
   final Function()? onFullScreen;
+
+  /// Exit Fullscreen callback
+  final Function()? onExitFullScreen;
 
   /// A widget to play Kinescope videos.
   const KinescopePlayer({
@@ -60,6 +62,7 @@ class KinescopePlayer extends StatefulWidget {
     required this.controller,
     this.aspectRatio = 16 / 9,
     this.onFullScreen,
+    this.onExitFullScreen,
   });
 
   @override
@@ -94,8 +97,10 @@ class _KinescopePlayerState extends State<KinescopePlayer> {
     return AspectRatio(
       aspectRatio: widget.aspectRatio,
       child: InAppWebView(
+        onExitFullscreen: (controller) {
+          widget.onExitFullScreen!();
+        },
         onEnterFullscreen: (controller) {
-          log('!!!!! Full Screen !!!!');
           widget.onFullScreen!();
         },
         onWebViewCreated: (controller) {
