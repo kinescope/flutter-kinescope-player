@@ -129,6 +129,7 @@ class _KinescopePlayerState extends State<KinescopePlayer> {
             );
         },
         initialSettings: InAppWebViewSettings(
+          iframeAllowFullscreen: true,
           useShouldOverrideUrlLoading: true,
           mediaPlaybackRequiresUserGesture: false,
           transparentBackground: true,
