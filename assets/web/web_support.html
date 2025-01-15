@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no'>
+    <style>
+        html, body {
+            padding: 0;
+            margin: 0;
+            width: 100%;
+            height: 100%;
+        }
+        #player {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            left: 0;
+            top: 0;
+        }
+    </style>
+
+    <script>
+        window.addEventListener('message', function(jdata) {
+            if(typeof jdata.data !== 'string') {
+                return;
+            }
+            try {
+                var data = JSON.parse(jdata.data);
+                console.log('data', data);
+                switch (data.action) {
+                    case 'flutter_player_load_video':
+                        loadVideo(data.value, {
+                            'externalId': data.externalId,
+                            'behaviour': JSON.parse(data.behaviour),
+                            'ui': JSON.parse(data.ui),
+                            'time': data.time,
+                        });
+                        break;
+                    case 'flutter_player_play':
+                        play();
+                        break;    
+                    case 'flutter_player_pause':
+                        pause();
+                        break;  
+                    case 'flutter_player_stop':
+                        stop();
+                        break;  
+                    case 'flutter_call_get_current_time':
+                        getCurrentTime();
+                        break;
+                    case 'flutter_call_get_duration':
+                        getDuration();
+                        break;
+                    case 'flutter_player_seek_to':
+                        seekTo(data.value);
+                        break;
+                    case 'flutter_player_volume':
+                        setVolume(data.value);
+                        break;
+                    case 'flutter_player_mute':
+                        mute();
+                        break;  
+                    case 'flutter_player_unmute':
+                        unmute();
+                        break;
+                }
+
+            } catch (e) {
+                console.error('message catch', e);
+            }           
+        });
+
+        var PlayerEvent = {
+            postMessage: function(event) {
+                console.log('flutter_player_event');
+                window.parent.postMessage(JSON.stringify({
+                    action: 'flutter_player_event',
+                    value: event,
+                }));
+            }
+        }
+
+        var Events = {
+            postMessage: function(event) {
+                window.parent.postMessage(JSON.stringify({
+                    action: 'flutter_action_event',
+                    value: event,
+                }));
+            }
+        }
+
+        var CurrentTime = {
+            postMessage: function(time) {
+                window.parent.postMessage(JSON.stringify({
+                    action: 'flutter_action_current_time',
+                    value: time,
+                }));
+            }
+        }
+
+        var Duration = {
+            postMessage: function(time) {
+                window.parent.postMessage(JSON.stringify({
+                    action: 'flutter_action_duration',
+                    value: time,
+                }));
+            }
+        }
+    </script>
+
+    <script>
+        let kinescopePlayerFactory = null;
+
+        let kinescopePlayer = null;
+
+        function onKinescopeIframeAPIReady(playerFactory) {
+            kinescopePlayerFactory = playerFactory;
+            PlayerEvent.postMessage('ready');
+        }
+
+        function loadVideo(videoUri, params) {
+            if (kinescopePlayer != null) {
+                kinescopePlayer.destroy();
+                kinescopePlayer = null;
+            }
+
+            if (kinescopePlayerFactory != null) {
+                var devElement = document.createElement("div");
+                devElement.id = "player";
+                document.body.append(devElement);
+
+                kinescopePlayerFactory
+                    .create('player', {
+                        url: videoUri,
+                        size: { width: '100%', height: '100%' },
+                        settings: {
+                          externalId: params.externalId,
+                        },
+                        behaviour: params.behaviour,
+                        ui: params.ui
+                    })
+                    .then(function (player) {
+                        kinescopePlayer = player;
+                        Events.postMessage('init');
+
+                        player.once(player.Events.Ready, function (event) {
+                          var time = params.time;
+                          if(time > 0 || time === 0) {
+                             event.target.seekTo(time);
+                          }
+                        });
+                        player.on(player.Events.Ready, function (event) { Events.postMessage('ready'); });
+                        player.on(player.Events.Playing, function (event) { Events.postMessage('playing'); });
+                        player.on(player.Events.Waiting, function (event) { Events.postMessage('waiting'); });
+                        player.on(player.Events.Pause, function (event) { Events.postMessage( 'pause'); });
+                        player.on(player.Events.Ended, function (event) { Events.postMessage('ended'); });
+                    });
+            }
+        }
+
+        function play() {
+            if (kinescopePlayer != null)
+              kinescopePlayer.play();
+        }
+
+        function pause() {
+            if (kinescopePlayer != null)
+              kinescopePlayer.pause();
+        }
+
+        function stop() {
+            if (kinescopePlayer != null)
+              kinescopePlayer.stop();
+        }
+
+        function seekTo(seconds) {
+            if (kinescopePlayer != null)
+              kinescopePlayer.seekTo(seconds);
+        }
+
+        function getCurrentTime() {
+            if (kinescopePlayer != null)
+              kinescopePlayer.getCurrentTime().then((value) => {
+                CurrentTime.postMessage(value);
+              }
+            );
+        }
+
+        function getDuration() {
+            if (kinescopePlayer != null)
+              kinescopePlayer.getDuration().then((value) => {
+                Duration.postMessage(value);
+              }
+            );
+        }
+
+        function setVolume(value) {
+            if (kinescopePlayer != null)
+              kinescopePlayer.setVolume(value);
+        }
+
+        function mute() {
+            if (kinescopePlayer != null)
+              kinescopePlayer.mute();
+        }
+
+        function unmute() {
+            if (kinescopePlayer != null)
+              kinescopePlayer.unmute();
+        }
+    </script>
+</head>
+
+<body>
+    <script>
+        var tag = document.createElement('script');
+
+        tag.src = 'https://player.kinescope.io/latest/iframe.player.js';
+        var firstScriptTag = document.getElementsByTagName('script')[0];
+        firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+    </script>
+</body>
+
+</html>

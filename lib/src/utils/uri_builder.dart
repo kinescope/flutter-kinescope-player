@@ -33,9 +33,9 @@ class UriBuilder {
     return args.t;
   }
 
-  static Map<String, Object>? parametersToUI(
-    PlayerParameters args,
-  ) {
+  static Map<String, Object>? parametersToUI(PlayerParameters args,
+      {bool escape = true}) {
+    final escapeChar = escape ? '"' : '';
     final uiMap = {
       // if (args.t != null) 't': '${args.t}',
       if (args.header != null) 'header': '${args.header}',
@@ -44,8 +44,10 @@ class UriBuilder {
       if (args.controls != null) 'controls': '${args.controls}',
       if (args.disableFiles != null) 'disableFiles': '${args.disableFiles}',
       'watermark': {
-        if (args.watermark.mode != null) 'mode': '"${args.watermark.mode}"',
-        if (args.watermark.text != null) 'text': '"${args.watermark.text}"',
+        if (args.watermark.mode != null)
+          'mode': '$escapeChar${args.watermark.mode}$escapeChar',
+        if (args.watermark.text != null)
+          'text': '$escapeChar${args.watermark.text}$escapeChar',
       },
     };
 
