@@ -182,7 +182,7 @@ class _KinescopePlayerState extends State<KinescopePlayerDevice> {
 
   void _proxyLoadVideo(String videoId) {
     controller.runJavaScript(
-      'loadVideo("${UriBuilder.buildVideoUri(videoId: videoId)}");',
+      'loadVideo("$videoId");',
     );
   }
 
