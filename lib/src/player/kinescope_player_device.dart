@@ -88,7 +88,7 @@ class _KinescopePlayerState extends State<KinescopePlayerDevice> {
           const PlatformNavigationDelegateCreationParams(),
         )
           ..setOnNavigationRequest((request) {
-            if (request.url.contains(_kinescopeUri)) {
+            if (!request.url.contains(_kinescopeUri)) {
               debugPrint('blocking navigation to ${request.url}');
               return NavigationDecision.prevent;
             }
