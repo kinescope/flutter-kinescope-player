@@ -1,9 +1,9 @@
 # Changelog
 
-## next
+## 0.2.0
 
 - change webview_flutter
-- remove web
+- drm web
 
 ## 0.1.10
 
