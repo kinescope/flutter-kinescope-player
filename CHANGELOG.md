@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.2.0
+
+- change webview_flutter
+- drm web
+
 ## 0.1.10
 
 - fix live seek

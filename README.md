@@ -4,7 +4,7 @@
 
 Flutter plugin for the Kinescope player.
 
-This package supports Android and iOS and uses [flutter_inappwebview](https://pub.dev/packages/flutter_inappwebview) under-the-hood.
+This package supports Android and iOS and uses [webview_flutter](https://pub.dev/packages/webview_flutter) under-the-hood.
 
 ## Requirements
 
@@ -78,7 +78,7 @@ Add `flutter_kinescope_sdk` to your `pubspec.yaml` file:
 
 ```yaml
 dependencies:
-  flutter_kinescope_sdk: ^0.1.10
+  flutter_kinescope_sdk: ^0.2.0
 ```
 
 ## Changelog

@@ -12,13 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-// ignore_for_file: member-ordering-extended
 import 'dart:async';
 
-import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:flutter_kinescope_sdk/src/data/player_parameters.dart';
 import 'package:flutter_kinescope_sdk/src/data/player_status.dart';
-import 'package:flutter_kinescope_sdk/src/utils/uri_builder.dart';
+import 'package:flutter_kinescope_sdk/src/player/kinescope_player_navigation.dart';
 
 /// Controls a Kinescope player, and provides status updates using [status] stream.
 ///
@@ -33,13 +31,7 @@ class KinescopePlayerController {
   final statusController = StreamController<KinescopePlayerStatus>();
 
   /// Controller to communicate with WebView.
-  late InAppWebViewController webViewController;
-
-  /// [Completer] for [getCurrentTime] method
-  Completer<Duration>? getCurrentTimeCompleter;
-
-  /// [Completer] for [getDuration] method
-  Completer<Duration>? getDurationCompleter;
+  late ControllerProxy controllerProxy = ControllerProxy();
 
   /// [Stream], that provides current player status
   Stream<KinescopePlayerStatus> get status => statusController.stream;
@@ -56,59 +48,38 @@ class KinescopePlayerController {
   /// Loads the video as per the [videoId] provided.
   void load(String videoId) {
     statusController.sink.add(KinescopePlayerStatus.unknown);
-    webViewController.evaluateJavascript(
-      source: 'loadVideo("${UriBuilder.buildVideoUri(videoId: videoId)}");',
-    );
-
+    controllerProxy.loadVideo(videoId);
     _videoId = videoId;
   }
 
   /// Plays the video.
   void play() {
-    webViewController.evaluateJavascript(source: 'play();');
+    controllerProxy.play();
   }
 
   /// Pauses the video.
   void pause() {
-    webViewController.evaluateJavascript(source: 'pause();');
+    controllerProxy.pause();
   }
 
   /// Stops the video.
   void stop() {
-    webViewController.evaluateJavascript(source: 'stop();');
+    controllerProxy.stop();
   }
 
   /// Get current position.
   Future<Duration> getCurrentTime() async {
-    getCurrentTimeCompleter = Completer<Duration>();
-
-    await webViewController.evaluateJavascript(
-      source: 'getCurrentTime();',
-    );
-
-    final time = await getCurrentTimeCompleter?.future;
-
-    return time ?? Duration.zero;
+    return controllerProxy.getCurrentTime();
   }
 
   /// Get duration of video.
   Future<Duration> getDuration() async {
-    getDurationCompleter = Completer<Duration>();
-
-    await webViewController.evaluateJavascript(
-      source: 'getDuration();',
-    );
-
-    final duration = await getDurationCompleter?.future;
-
-    return duration ?? Duration.zero;
+    return controllerProxy.getDuration();
   }
 
   /// Seek to any position.
   void seekTo(Duration duration) {
-    webViewController.evaluateJavascript(
-      source: 'seekTo(${duration.inSeconds});',
-    );
+    controllerProxy.seekTo(duration);
   }
 
   /// Set volume level
@@ -116,18 +87,18 @@ class KinescopePlayerController {
   /// Works only on Android
   void setVolume(double value) {
     if (value > 0 || value <= 1) {
-      webViewController.evaluateJavascript(source: 'setVolume($value);');
+      controllerProxy.setVolume(value);
     }
   }
 
   /// Mutes the player.
   void mute() {
-    webViewController.evaluateJavascript(source: 'mute();');
+    controllerProxy.mute();
   }
 
   /// Unmutes the player.
   void unmute() {
-    webViewController.evaluateJavascript(source: 'unmute();');
+    controllerProxy.unmute();
   }
 
   /// Close [statusController]

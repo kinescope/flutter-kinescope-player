@@ -21,6 +21,9 @@ class KinescopePlayerStatus {
   static const KinescopePlayerStatus unknown =
       KinescopePlayerStatus._('unknown');
 
+  /// Denotes [KinescopePlayerStatus] when player is init to call js.
+  static const KinescopePlayerStatus init = KinescopePlayerStatus._('init');
+
   /// Denotes [KinescopePlayerStatus] when player is ready to play video.
   static const KinescopePlayerStatus ready = KinescopePlayerStatus._('ready');
 
@@ -40,6 +43,7 @@ class KinescopePlayerStatus {
 
   /// List of available values of player status
   static Iterable<KinescopePlayerStatus> values = [
+    KinescopePlayerStatus.init,
     KinescopePlayerStatus.ready,
     KinescopePlayerStatus.playing,
     KinescopePlayerStatus.waiting,
