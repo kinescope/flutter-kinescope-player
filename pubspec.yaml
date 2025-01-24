@@ -1,6 +1,6 @@
 name: flutter_kinescope_sdk
 description: Flutter plugin for the Kinescope player.
-version: 0.2.0
+version: 0.2.1
 homepage: https://kinescope.io/
 repository: https://github.com/kinescope/flutter-kinescope-player
 issue_tracker: https://github.com/kinescope/flutter-kinescope-player/issues
