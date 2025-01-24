@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.2.1
+
+- fix base url ios
+
 ## 0.2.0
 
 - change webview_flutter
