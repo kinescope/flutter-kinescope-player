@@ -55,6 +55,7 @@ class _KinescopePlayerState extends State<KinescopePlayerDevice> {
   late String videoId;
   late String externalId;
   late String baseUrl;
+  late String baseHost;
 
   @override
   void initState() {
@@ -66,6 +67,7 @@ class _KinescopePlayerState extends State<KinescopePlayerDevice> {
           scheme: _scheme,
           host: _kinescopeUri,
         ).toString();
+    baseHost = Uri.parse(baseUrl).host;
 
     late final PlatformWebViewControllerCreationParams params;
 
@@ -88,7 +90,8 @@ class _KinescopePlayerState extends State<KinescopePlayerDevice> {
           const PlatformNavigationDelegateCreationParams(),
         )
           ..setOnNavigationRequest((request) {
-            if (!request.url.contains(_kinescopeUri)) {
+            if (!request.url.contains(_kinescopeUri) &&
+                !request.url.contains(baseHost)) {
               debugPrint('blocking navigation to ${request.url}');
               return NavigationDecision.prevent;
             }
