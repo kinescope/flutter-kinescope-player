@@ -346,11 +346,6 @@ class _KinescopePlayerState extends State<KinescopePlayerDevice> {
                         player.on(player.Events.Pause, function (event) { Events.postMessage('pause'); });
                         player.on(player.Events.Ended, function (event) { Events.postMessage('ended'); });
                         player.on(player.Events.TimeUpdate, function (event) { 
-                        // if (event.data) {
-                        //  console.log("TimeUpdate Event:", event.data); 
-                        //  } else {
-                        //       console.warn("TimeUpdate event.data is undefined");
-                        //   }
                         Events.postMessage(JSON.stringify(event.data)); 
                         }); 
                     });
