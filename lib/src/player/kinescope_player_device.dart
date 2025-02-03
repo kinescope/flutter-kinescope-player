@@ -143,6 +143,24 @@ class _KinescopePlayerState extends State<KinescopePlayerDevice> {
           },
         ),
       )
+      ..addJavaScriptChannel(
+        JavaScriptChannelParams(
+          name: 'FullScreen',
+          onMessageReceived: (message) {
+            final dynamic isFullscreen = bool.parse(message.message);
+            if (isFullscreen is bool) {
+              if (isFullscreen &&
+                  widget.controller.parameters.onEnterFullScreen != null) {
+                widget.controller.parameters.onEnterFullScreen!();
+              }
+              if (!isFullscreen &&
+                  widget.controller.parameters.onExitFullScreen != null) {
+                widget.controller.parameters.onExitFullScreen!();
+              }
+            }
+          },
+        ),
+      )
       ..setOnPlatformPermissionRequest(
         (request) {
           debugPrint(
@@ -336,6 +354,7 @@ class _KinescopePlayerState extends State<KinescopePlayerDevice> {
                         player.on(player.Events.Waiting, function (event) { Events.postMessage('waiting'); });
                         player.on(player.Events.Pause, function (event) { Events.postMessage( 'pause'); });
                         player.on(player.Events.Ended, function (event) { Events.postMessage('ended'); });
+                        player.on(player.Events.FullscreenChange, onFullScreen);
                     });
             }
         }
@@ -392,6 +411,10 @@ class _KinescopePlayerState extends State<KinescopePlayerDevice> {
         function unmute() {
             if (kinescopePlayer != null)
               kinescopePlayer.unmute();
+        }
+
+        function onFullScreen(arg) {
+          FullScreen.postMessage(arg.data.isFullscreen);
         }
     </script>
 </head>

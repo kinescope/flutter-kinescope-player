@@ -105,6 +105,15 @@
                 }));
             }
         }
+
+        var FullScreen = {
+            postMessage: function(isFullscreen) {
+                window.parent.postMessage(JSON.stringify({
+                    action: 'flutter_action_fullscreen',
+                    value: isFullscreen,
+                }));
+            }
+        }
     </script>
 
     <script>
@@ -153,6 +162,7 @@
                         player.on(player.Events.Waiting, function (event) { Events.postMessage('waiting'); });
                         player.on(player.Events.Pause, function (event) { Events.postMessage( 'pause'); });
                         player.on(player.Events.Ended, function (event) { Events.postMessage('ended'); });
+                        player.on(player.Events.FullscreenChange, onFullScreen);
                     });
             }
         }
@@ -206,6 +216,10 @@
         function unmute() {
             if (kinescopePlayer != null)
               kinescopePlayer.unmute();
+        }
+
+        function onFullScreen(arg) {
+          FullScreen.postMessage(arg.data.isFullscreen);
         }
     </script>
 </head>

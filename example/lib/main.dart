@@ -12,7 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_kinescope_sdk/flutter_kinescope_sdk.dart';
 
 const _initialVideoId = 'sEsxJQ7Hi4QLWwbmZEFfgz';
@@ -50,22 +52,35 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
+
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+    ]);
+
     _kinescopeController = KinescopePlayerController(
       _initialVideoId,
-      parameters: const PlayerParameters(
+      parameters: PlayerParameters(
         // autoplay: true,
         // header: false,
         // muted: true,
         // loop: true,
         // background: true,
         // disableFiles: true,
-        watermark: WatermarkParameters(
+        watermark: const WatermarkParameters(
           mode: 'random',
           text: 'water-text',
         ),
+        onEnterFullScreen: _onEnterFullScreen,
+        onExitFullScreen: _onExitFullScreen,
         // t: 20,
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    _onExitFullScreen();
+    super.dispose();
   }
 
   @override
@@ -182,6 +197,25 @@ class _HomePageState extends State<HomePage> {
         );
       },
     );
+  }
+
+  void _onEnterFullScreen() {
+    if (defaultTargetPlatform == TargetPlatform.android) {
+      SystemChrome.setPreferredOrientations([
+        DeviceOrientation.landscapeLeft,
+        DeviceOrientation.landscapeRight,
+      ]);
+      SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersive);
+    }
+  }
+
+  void _onExitFullScreen() {
+    if (defaultTargetPlatform == TargetPlatform.android) {
+      SystemChrome.setPreferredOrientations([
+        DeviceOrientation.portraitUp,
+      ]);
+      SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+    }
   }
 
   void _pause() {
