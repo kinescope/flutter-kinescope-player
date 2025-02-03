@@ -69,8 +69,8 @@ You can set initial Kinescope player parameters using PlayerParameters.
 | controls           | Visibility controls                                                                                             |
 | disableFiles       | Hide additional materials                                                                                       |
 | watermark          | Set watermark                                                                                                   |
-| onEnterFullsScreen | Event enter fullscreen                                                                                          |
-| onExitFullsScreen  | Event exit fullscreen                                                                                           |
+| onEnterFullScreen  | Event enter fullscreen                                                                                          |
+| onExitFullScreen   | Event exit fullscreen                                                                                           |
 
 For a more detailed usage example, go to [example](./example/lib/main.dart).
 
