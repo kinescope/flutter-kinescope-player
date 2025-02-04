@@ -152,6 +152,24 @@ class _KinescopePlayerState extends State<KinescopePlayerDevice> {
           },
         ),
       )
+      ..addJavaScriptChannel(
+        JavaScriptChannelParams(
+          name: 'FullScreen',
+          onMessageReceived: (message) {
+            final dynamic isFullscreen = bool.parse(message.message);
+            if (isFullscreen is bool) {
+              if (isFullscreen &&
+                  widget.controller.parameters.onEnterFullScreen != null) {
+                widget.controller.parameters.onEnterFullScreen!();
+              }
+              if (!isFullscreen &&
+                  widget.controller.parameters.onExitFullScreen != null) {
+                widget.controller.parameters.onExitFullScreen!();
+              }
+            }
+          },
+        ),
+      )
       ..setOnPlatformPermissionRequest(
         (request) {
           debugPrint(
@@ -264,8 +282,8 @@ class _KinescopePlayerState extends State<KinescopePlayerDevice> {
 
   String? getUserArgent() {
     return (Platform.isIOS
-        ? 'Mozilla/5.0 (iPad; CPU iPhone OS 13_2 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) KinescopePlayerFlutter/0.2.1'
-        : 'Mozilla/5.0 (Android 9.0; Mobile; rv:59.0) Gecko/59.0 Firefox/59.0 KinescopePlayerFlutter/0.2.1');
+        ? 'Mozilla/5.0 (iPad; CPU iPhone OS 13_2 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) KinescopePlayerFlutter/0.2.2'
+        : 'Mozilla/5.0 (Android 9.0; Mobile; rv:59.0) Gecko/59.0 Firefox/59.0 KinescopePlayerFlutter/0.2.2');
   }
 
   // ignore: member-ordering-extended
@@ -345,9 +363,8 @@ class _KinescopePlayerState extends State<KinescopePlayerDevice> {
                         player.on(player.Events.Waiting, function (event) { Events.postMessage('waiting'); });
                         player.on(player.Events.Pause, function (event) { Events.postMessage('pause'); });
                         player.on(player.Events.Ended, function (event) { Events.postMessage('ended'); });
-                        player.on(player.Events.TimeUpdate, function (event) { 
-                        Events.postMessage(JSON.stringify(event.data)); 
-                        }); 
+                        player.on(player.Events.TimeUpdate, function (event) { Events.postMessage(JSON.stringify(event.data)); }); 
+                        player.on(player.Events.FullscreenChange, onFullScreen);
                     });
             }
         }
@@ -404,6 +421,10 @@ class _KinescopePlayerState extends State<KinescopePlayerDevice> {
         function unmute() {
             if (kinescopePlayer != null)
               kinescopePlayer.unmute();
+        }
+
+        function onFullScreen(arg) {
+          FullScreen.postMessage(arg.data.isFullscreen);
         }
     </script>
 </head>

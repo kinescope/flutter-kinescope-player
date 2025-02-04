@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.2.2
+
+- Add player parameters: `onEnterFullScreen`, `onExitFullScreen`
+
 ## 0.2.1
 
 - fix base url ios

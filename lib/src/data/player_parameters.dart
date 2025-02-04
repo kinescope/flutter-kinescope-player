@@ -35,6 +35,8 @@ class PlayerParameters {
   final bool? controls;
   final bool? disableFiles;
   final WatermarkParameters watermark;
+  final void Function()? onEnterFullScreen;
+  final void Function()? onExitFullScreen;
 
   /// Sets the user-agent.
   final String? userAgent;
@@ -62,6 +64,8 @@ class PlayerParameters {
     this.baseUrl,
     this.disableFiles,
     this.watermark = const WatermarkParameters(),
+    this.onEnterFullScreen,
+    this.onExitFullScreen,
   });
 }
 

@@ -209,6 +209,20 @@ class _KinescopePlayerWebState extends State<KinescopePlayerWeb> {
           );
         }
       }
+
+      if (pm.action == 'flutter_action_fullscreen') {
+        final dynamic isFullscreen = bool.parse(pm.value.toString());
+        if (isFullscreen is bool) {
+          if (isFullscreen &&
+              widget.controller.parameters.onEnterFullScreen != null) {
+            widget.controller.parameters.onEnterFullScreen!();
+          }
+          if (!isFullscreen &&
+              widget.controller.parameters.onExitFullScreen != null) {
+            widget.controller.parameters.onExitFullScreen!();
+          }
+        }
+      }
     }
   }
 
