@@ -13,6 +13,7 @@
 // limitations under the License.
 
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/widgets.dart';
 
@@ -108,12 +109,20 @@ class _KinescopePlayerState extends State<KinescopePlayerDevice> {
         JavaScriptChannelParams(
           name: 'Events',
           onMessageReceived: (message) {
-            widget.controller.statusController.add(
-              KinescopePlayerStatus.values.firstWhere(
-                (value) => value.toString() == message.message,
-                orElse: () => KinescopePlayerStatus.unknown,
-              ),
-            );
+            if (message.message != null &&
+                message.message.contains('currentTime')) {
+              // Преобразуем JSON-строку в Map
+              final data = jsonDecode(message.message) as Map<String, dynamic>;
+              // debugPrint("Current Time: ${data['currentTime']}");
+              widget.controller.timeUpdateController.add(data);
+            } else {
+              widget.controller.statusController.add(
+                KinescopePlayerStatus.values.firstWhere(
+                  (value) => value.toString() == message.message,
+                  orElse: () => KinescopePlayerStatus.unknown,
+                ),
+              );
+            }
           },
         ),
       )
@@ -352,8 +361,9 @@ class _KinescopePlayerState extends State<KinescopePlayerDevice> {
                         player.on(player.Events.Ready, function (event) { Events.postMessage('ready'); });
                         player.on(player.Events.Playing, function (event) { Events.postMessage('playing'); });
                         player.on(player.Events.Waiting, function (event) { Events.postMessage('waiting'); });
-                        player.on(player.Events.Pause, function (event) { Events.postMessage( 'pause'); });
+                        player.on(player.Events.Pause, function (event) { Events.postMessage('pause'); });
                         player.on(player.Events.Ended, function (event) { Events.postMessage('ended'); });
+                        player.on(player.Events.TimeUpdate, function (event) { Events.postMessage(JSON.stringify(event.data)); }); 
                         player.on(player.Events.FullscreenChange, onFullScreen);
                     });
             }

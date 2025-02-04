@@ -39,11 +39,23 @@ class KinescopePlayerController {
   /// Currently playing video id
   String get videoId => _videoId;
 
+  /// StreamController for timeUpdate stream.
+  final StreamController<Map<String, dynamic>> timeUpdateController =
+      StreamController<Map<String, dynamic>>.broadcast();
+
+  // [Stream] that provides current time of the video
+  Stream<Map<String, dynamic>> get timeUpdateStream =>
+      timeUpdateController.stream;
+
   KinescopePlayerController(
     /// The video id with which the player initializes.
     String videoId, {
     this.parameters = const PlayerParameters(),
-  }) : _videoId = videoId;
+  }) : _videoId = videoId {
+    timeUpdateStream.listen((onData) {
+      // log('NEW TIME UPDATE $onData');
+    });
+  }
 
   /// Loads the video as per the [videoId] provided.
   void load(String videoId) {
@@ -101,8 +113,9 @@ class KinescopePlayerController {
     controllerProxy.unmute();
   }
 
-  /// Close [statusController]
+  /// Close [statusController] and [timeUpdateController] stream.
   void dispose() {
     statusController.close();
+    timeUpdateController.close();
   }
 }
