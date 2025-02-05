@@ -109,20 +109,12 @@ class _KinescopePlayerState extends State<KinescopePlayerDevice> {
         JavaScriptChannelParams(
           name: 'Events',
           onMessageReceived: (message) {
-            if (message.message != null &&
-                message.message.contains('currentTime')) {
-              // Преобразуем JSON-строку в Map
-              final data = jsonDecode(message.message) as Map<String, dynamic>;
-              // debugPrint("Current Time: ${data['currentTime']}");
-              widget.controller.timeUpdateController.add(data);
-            } else {
-              widget.controller.statusController.add(
-                KinescopePlayerStatus.values.firstWhere(
-                  (value) => value.toString() == message.message,
-                  orElse: () => KinescopePlayerStatus.unknown,
-                ),
-              );
-            }
+            widget.controller.statusController.add(
+              KinescopePlayerStatus.values.firstWhere(
+                (value) => value.toString() == message.message,
+                orElse: () => KinescopePlayerStatus.unknown,
+              ),
+            );
           },
         ),
       )
@@ -166,6 +158,19 @@ class _KinescopePlayerState extends State<KinescopePlayerDevice> {
                   widget.controller.parameters.onExitFullScreen != null) {
                 widget.controller.parameters.onExitFullScreen!();
               }
+            }
+          },
+        ),
+      )
+      ..addJavaScriptChannel(
+        JavaScriptChannelParams(
+          name: 'TimeUpdate',
+          onMessageReceived: (message) {
+            if (message.message != null &&
+                message.message.contains('currentTime')) {
+              // Преобразуем JSON-строку в Map
+              final data = jsonDecode(message.message) as Map<String, dynamic>;
+              widget.controller.timeUpdateController.add(data);
             }
           },
         ),
@@ -363,8 +368,8 @@ class _KinescopePlayerState extends State<KinescopePlayerDevice> {
                         player.on(player.Events.Waiting, function (event) { Events.postMessage('waiting'); });
                         player.on(player.Events.Pause, function (event) { Events.postMessage('pause'); });
                         player.on(player.Events.Ended, function (event) { Events.postMessage('ended'); });
-                        player.on(player.Events.TimeUpdate, function (event) { Events.postMessage(JSON.stringify(event.data)); }); 
                         player.on(player.Events.FullscreenChange, onFullScreen);
+                        player.on(player.Events.TimeUpdate, onTimeUpdate); 
                     });
             }
         }
@@ -425,6 +430,10 @@ class _KinescopePlayerState extends State<KinescopePlayerDevice> {
 
         function onFullScreen(arg) {
           FullScreen.postMessage(arg.data.isFullscreen);
+        }
+
+        function onTimeUpdate(arg) {
+          TimeUpdate.postMessage(JSON.stringify(arg.data));
         }
     </script>
 </head>
