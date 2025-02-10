@@ -16,6 +16,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_kinescope_sdk/src/data/player_time_update.dart';
 
 import 'package:webview_flutter_android/webview_flutter_android.dart';
 import 'package:webview_flutter_platform_interface/webview_flutter_platform_interface.dart';
@@ -168,9 +169,9 @@ class _KinescopePlayerState extends State<KinescopePlayerDevice> {
           onMessageReceived: (message) {
             if (message.message != null &&
                 message.message.contains('currentTime')) {
-              // Преобразуем JSON-строку в Map
               final data = jsonDecode(message.message) as Map<String, dynamic>;
-              widget.controller.timeUpdateController.add(data);
+              widget.controller.timeUpdateController
+                  .add(PlayerTimeUpdateData.fromJson(data));
             }
           },
         ),

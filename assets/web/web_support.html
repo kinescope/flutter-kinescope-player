@@ -5,12 +5,14 @@
     <meta charset="utf-8" />
     <meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no'>
     <style>
-        html, body {
+        html,
+        body {
             padding: 0;
             margin: 0;
             width: 100%;
             height: 100%;
         }
+
         #player {
             position: fixed;
             width: 100%;
@@ -21,8 +23,8 @@
     </style>
 
     <script>
-        window.addEventListener('message', function(jdata) {
-            if(typeof jdata.data !== 'string') {
+        window.addEventListener('message', function (jdata) {
+            if (typeof jdata.data !== 'string') {
                 return;
             }
             try {
@@ -38,13 +40,13 @@
                         break;
                     case 'flutter_player_play':
                         play();
-                        break;    
+                        break;
                     case 'flutter_player_pause':
                         pause();
-                        break;  
+                        break;
                     case 'flutter_player_stop':
                         stop();
-                        break;  
+                        break;
                     case 'flutter_call_get_current_time':
                         getCurrentTime();
                         break;
@@ -59,7 +61,7 @@
                         break;
                     case 'flutter_player_mute':
                         mute();
-                        break;  
+                        break;
                     case 'flutter_player_unmute':
                         unmute();
                         break;
@@ -67,11 +69,11 @@
 
             } catch (e) {
                 console.error('message catch', e);
-            }           
+            }
         });
 
         var PlayerEvent = {
-            postMessage: function(event) {
+            postMessage: function (event) {
                 window.parent.postMessage(JSON.stringify({
                     action: 'flutter_player_event',
                     value: event,
@@ -80,7 +82,7 @@
         }
 
         var Events = {
-            postMessage: function(event) {
+            postMessage: function (event) {
                 window.parent.postMessage(JSON.stringify({
                     action: 'flutter_action_event',
                     value: event,
@@ -89,7 +91,7 @@
         }
 
         var CurrentTime = {
-            postMessage: function(time) {
+            postMessage: function (time) {
                 window.parent.postMessage(JSON.stringify({
                     action: 'flutter_action_current_time',
                     value: time,
@@ -98,7 +100,7 @@
         }
 
         var Duration = {
-            postMessage: function(time) {
+            postMessage: function (time) {
                 window.parent.postMessage(JSON.stringify({
                     action: 'flutter_action_duration',
                     value: time,
@@ -107,10 +109,19 @@
         }
 
         var FullScreen = {
-            postMessage: function(isFullscreen) {
+            postMessage: function (isFullscreen) {
                 window.parent.postMessage(JSON.stringify({
                     action: 'flutter_action_fullscreen',
                     value: isFullscreen,
+                }));
+            }
+        }
+
+        var TimeUpdate = {
+            postMessage: function (val) {
+                window.parent.postMessage(JSON.stringify({
+                    action: 'flutter_action_time_update',
+                    value: val,
                 }));
             }
         }
@@ -142,7 +153,7 @@
                         url: videoUri,
                         size: { width: '100%', height: '100%' },
                         settings: {
-                          externalId: params.externalId,
+                            externalId: params.externalId,
                         },
                         behaviour: params.behaviour,
                         ui: params.ui
@@ -152,74 +163,79 @@
                         Events.postMessage('init');
 
                         player.once(player.Events.Ready, function (event) {
-                          var time = params.time;
-                          if(time > 0 || time === 0) {
-                             event.target.seekTo(time);
-                          }
+                            var time = params.time;
+                            if (time > 0 || time === 0) {
+                                event.target.seekTo(time);
+                            }
                         });
                         player.on(player.Events.Ready, function (event) { Events.postMessage('ready'); });
                         player.on(player.Events.Playing, function (event) { Events.postMessage('playing'); });
                         player.on(player.Events.Waiting, function (event) { Events.postMessage('waiting'); });
-                        player.on(player.Events.Pause, function (event) { Events.postMessage( 'pause'); });
+                        player.on(player.Events.Pause, function (event) { Events.postMessage('pause'); });
                         player.on(player.Events.Ended, function (event) { Events.postMessage('ended'); });
                         player.on(player.Events.FullscreenChange, onFullScreen);
+                        player.on(player.Events.TimeUpdate, onTimeUpdate);
                     });
             }
         }
 
         function play() {
             if (kinescopePlayer != null)
-              kinescopePlayer.play();
+                kinescopePlayer.play();
         }
 
         function pause() {
             if (kinescopePlayer != null)
-              kinescopePlayer.pause();
+                kinescopePlayer.pause();
         }
 
         function stop() {
             if (kinescopePlayer != null)
-              kinescopePlayer.stop();
+                kinescopePlayer.stop();
         }
 
         function seekTo(seconds) {
             if (kinescopePlayer != null)
-              kinescopePlayer.seekTo(seconds);
+                kinescopePlayer.seekTo(seconds);
         }
 
         function getCurrentTime() {
             if (kinescopePlayer != null)
-              kinescopePlayer.getCurrentTime().then((value) => {
-                CurrentTime.postMessage(value);
-              }
-            );
+                kinescopePlayer.getCurrentTime().then((value) => {
+                    CurrentTime.postMessage(value);
+                }
+                );
         }
 
         function getDuration() {
             if (kinescopePlayer != null)
-              kinescopePlayer.getDuration().then((value) => {
-                Duration.postMessage(value);
-              }
-            );
+                kinescopePlayer.getDuration().then((value) => {
+                    Duration.postMessage(value);
+                }
+                );
         }
 
         function setVolume(value) {
             if (kinescopePlayer != null)
-              kinescopePlayer.setVolume(value);
+                kinescopePlayer.setVolume(value);
         }
 
         function mute() {
             if (kinescopePlayer != null)
-              kinescopePlayer.mute();
+                kinescopePlayer.mute();
         }
 
         function unmute() {
             if (kinescopePlayer != null)
-              kinescopePlayer.unmute();
+                kinescopePlayer.unmute();
         }
 
         function onFullScreen(arg) {
-          FullScreen.postMessage(arg.data.isFullscreen);
+            FullScreen.postMessage(arg.data.isFullscreen);
+        }
+
+        function onTimeUpdate(arg) {
+            TimeUpdate.postMessage(arg.data);
         }
     </script>
 </head>

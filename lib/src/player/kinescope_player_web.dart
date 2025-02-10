@@ -18,6 +18,7 @@ import 'dart:js_interop';
 import 'dart:ui_web' as ui_web;
 
 import 'package:flutter/widgets.dart';
+import 'package:flutter_kinescope_sdk/src/data/player_time_update.dart';
 import 'package:web/web.dart' as web;
 
 import '../data/player_status.dart';
@@ -221,6 +222,16 @@ class _KinescopePlayerWebState extends State<KinescopePlayerWeb> {
               widget.controller.parameters.onExitFullScreen != null) {
             widget.controller.parameters.onExitFullScreen!();
           }
+        }
+      }
+
+      if (pm.action == 'flutter_action_time_update') {
+        try {
+          widget.controller.timeUpdateController.add(
+            PlayerTimeUpdateData.fromJson(pm.value as Map<String, dynamic>),
+          );
+        } catch (e) {
+          debugPrint('Error decoding time update data: $e');
         }
       }
     }
