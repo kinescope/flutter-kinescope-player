@@ -18,10 +18,10 @@ import 'dart:js_interop';
 import 'dart:ui_web' as ui_web;
 
 import 'package:flutter/widgets.dart';
-import 'package:flutter_kinescope_sdk/src/data/player_time_update.dart';
 import 'package:web/web.dart' as web;
 
 import '../data/player_status.dart';
+import '../data/player_time_update.dart';
 import '../kinescope_player_controller.dart';
 import '../utils/uri_builder.dart';
 

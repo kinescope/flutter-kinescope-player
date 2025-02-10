@@ -16,13 +16,13 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/widgets.dart';
-import 'package:flutter_kinescope_sdk/src/data/player_time_update.dart';
 
 import 'package:webview_flutter_android/webview_flutter_android.dart';
 import 'package:webview_flutter_platform_interface/webview_flutter_platform_interface.dart';
 import 'package:webview_flutter_wkwebview/webview_flutter_wkwebview.dart';
 
 import '../data/player_status.dart';
+import '../data/player_time_update.dart';
 import '../kinescope_player_controller.dart';
 import '../utils/uri_builder.dart';
 
