@@ -170,8 +170,10 @@ class _KinescopePlayerState extends State<KinescopePlayerDevice> {
             if (message.message != null &&
                 message.message.contains('currentTime')) {
               final data = jsonDecode(message.message) as Map<String, dynamic>;
-              widget.controller.timeUpdateController
-                  .add(PlayerTimeUpdateData.fromJson(data));
+              if (!widget.controller.timeUpdateController.isClosed) {
+                widget.controller.timeUpdateController
+                    .add(PlayerTimeUpdateData.fromJson(data));
+              }
             }
           },
         ),
