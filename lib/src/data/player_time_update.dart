@@ -18,8 +18,8 @@ import 'package:flutter/foundation.dart';
 /// see https://player.kinescope.io/latest/docs/iframe/IframeRegular.html
 @immutable
 class PlayerTimeUpdateData {
-  final String? currentTime;
-  final String? percent;
+  final double? currentTime;
+  final int? percent;
 
   const PlayerTimeUpdateData({
     required this.percent,
@@ -30,8 +30,8 @@ class PlayerTimeUpdateData {
     final currentTime = data['currentTime'];
     final percent = data['percent'];
     return PlayerTimeUpdateData(
-      currentTime: currentTime.toString(),
-      percent: percent.toString(),
+      currentTime: currentTime is double ? currentTime : 0,
+      percent: percent is int ? percent : 0,
     );
   }
 }

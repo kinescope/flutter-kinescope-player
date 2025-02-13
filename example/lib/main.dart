@@ -48,6 +48,8 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   final _textEditingController = TextEditingController(text: _initialVideoId);
   late KinescopePlayerController _kinescopeController;
+  late double timeCurrentPosition = 0;
+  late int timeCurrentPositionPercent = 0;
 
   @override
   void initState() {
@@ -73,6 +75,15 @@ class _HomePageState extends State<HomePage> {
         onEnterFullScreen: _onEnterFullScreen,
         onExitFullScreen: _onExitFullScreen,
         // t: 20,
+      ),
+    );
+
+    _kinescopeController.timeUpdateStream.listen(
+      (item) => setState(
+        () {
+          timeCurrentPosition = item.currentTime!;
+          timeCurrentPositionPercent = item.percent!;
+        },
       ),
     );
   }
@@ -185,11 +196,18 @@ class _HomePageState extends State<HomePage> {
                   color: Theme.of(context).primaryColor,
                   borderRadius: BorderRadius.circular(16),
                 ),
-                child: Center(
-                  child: Text(
-                    'KinescopePlayerStatus: ${snapshot.data}',
-                    style: const TextStyle(color: Colors.white),
-                  ),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Text(
+                      'KinescopePlayerStatus: ${snapshot.data}',
+                      style: const TextStyle(color: Colors.white),
+                    ),
+                    Text(
+                      'PlayerTimeUpdateData: $timeCurrentPosition $timeCurrentPositionPercent%',
+                      style: const TextStyle(color: Colors.white),
+                    ),
+                  ],
                 ),
               ),
             ],

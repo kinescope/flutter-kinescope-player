@@ -169,8 +169,7 @@ class _KinescopePlayerState extends State<KinescopePlayerDevice> {
         JavaScriptChannelParams(
           name: 'TimeUpdate',
           onMessageReceived: (message) {
-            if (message.message != null &&
-                message.message.contains('currentTime')) {
+            if (message.message.contains('currentTime')) {
               final data = jsonDecode(message.message) as Map<String, dynamic>;
               if (!widget.controller.timeUpdateController.isClosed) {
                 widget.controller.timeUpdateController
