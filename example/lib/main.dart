@@ -50,9 +50,9 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   final _textEditingController = TextEditingController(text: _initialVideoId);
   late KinescopePlayerController _kinescopeController;
-  late StreamSubscription<PlayerTimeUpdateData> subscriptionTimeUpdate;
-  late double timeCurrentPosition = 0;
-  late int timeCurrentPositionPercent = 0;
+  late StreamSubscription<KinescopePlayerTimeUpdate> _subscriptionTimeUpdate;
+  late double _timeCurrentPosition = 0;
+  late int _timeCurrentPositionPercent = 0;
 
   @override
   void initState() {
@@ -81,11 +81,11 @@ class _HomePageState extends State<HomePage> {
       ),
     );
 
-    subscriptionTimeUpdate = _kinescopeController.timeUpdateStream.listen(
+    _subscriptionTimeUpdate = _kinescopeController.timeUpdateStream.listen(
       (item) => setState(
         () {
-          timeCurrentPosition = item.currentTime!;
-          timeCurrentPositionPercent = item.percent!;
+          _timeCurrentPosition = item.currentTime!;
+          _timeCurrentPositionPercent = item.percent!;
         },
       ),
     );
@@ -93,7 +93,7 @@ class _HomePageState extends State<HomePage> {
 
   @override
   void dispose() {
-    subscriptionTimeUpdate.cancel();
+    _subscriptionTimeUpdate.cancel();
     _onExitFullScreen();
     super.dispose();
   }
@@ -208,7 +208,7 @@ class _HomePageState extends State<HomePage> {
                       style: const TextStyle(color: Colors.white),
                     ),
                     Text(
-                      'PlayerTimeUpdateData: $timeCurrentPosition $timeCurrentPositionPercent%',
+                      'KinescopePlayerTimeUpdate: $_timeCurrentPosition $_timeCurrentPositionPercent%',
                       style: const TextStyle(color: Colors.white),
                     ),
                   ],

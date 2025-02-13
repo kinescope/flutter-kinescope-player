@@ -40,11 +40,11 @@ class KinescopePlayerController {
   String get videoId => _videoId;
 
   /// StreamController for timeUpdate stream.
-  final StreamController<PlayerTimeUpdateData> timeUpdateController =
-      StreamController<PlayerTimeUpdateData>.broadcast();
+  final StreamController<KinescopePlayerTimeUpdate> timeUpdateController =
+      StreamController<KinescopePlayerTimeUpdate>.broadcast();
 
   // [Stream] that provides current time of the video
-  Stream<PlayerTimeUpdateData> get timeUpdateStream =>
+  Stream<KinescopePlayerTimeUpdate> get timeUpdateStream =>
       timeUpdateController.stream;
 
   KinescopePlayerController(

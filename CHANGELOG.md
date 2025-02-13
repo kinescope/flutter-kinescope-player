@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.2.3
+
+- Added `KinescopePlayerController` with stream providing `KinescopePlayerTimeUpdate`
+
 ## 0.2.2
 
 - Add player parameters: `onEnterFullScreen`, `onExitFullScreen`

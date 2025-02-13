@@ -17,19 +17,19 @@ import 'package:flutter/foundation.dart';
 /// Initial Kinescope player parameters
 /// see https://player.kinescope.io/latest/docs/iframe/IframeRegular.html
 @immutable
-class PlayerTimeUpdateData {
+class KinescopePlayerTimeUpdate {
   final double? currentTime;
   final int? percent;
 
-  const PlayerTimeUpdateData({
+  const KinescopePlayerTimeUpdate({
     required this.percent,
     required this.currentTime,
   });
 
-  factory PlayerTimeUpdateData.fromJson(Map<String, dynamic> data) {
+  factory KinescopePlayerTimeUpdate.fromJson(Map<String, dynamic> data) {
     final currentTime = data['currentTime'];
     final percent = data['percent'];
-    return PlayerTimeUpdateData(
+    return KinescopePlayerTimeUpdate(
       currentTime: currentTime is double ? currentTime : 0,
       percent: percent is int ? percent : 0,
     );

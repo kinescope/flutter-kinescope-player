@@ -173,7 +173,7 @@ class _KinescopePlayerState extends State<KinescopePlayerDevice> {
               final data = jsonDecode(message.message) as Map<String, dynamic>;
               if (!widget.controller.timeUpdateController.isClosed) {
                 widget.controller.timeUpdateController
-                    .add(PlayerTimeUpdateData.fromJson(data));
+                    .add(KinescopePlayerTimeUpdate.fromJson(data));
               }
             }
           },
@@ -291,8 +291,8 @@ class _KinescopePlayerState extends State<KinescopePlayerDevice> {
 
   String? getUserArgent() {
     return (Platform.isIOS
-        ? 'Mozilla/5.0 (iPad; CPU iPhone OS 13_2 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) KinescopePlayerFlutter/0.2.2'
-        : 'Mozilla/5.0 (Android 9.0; Mobile; rv:59.0) Gecko/59.0 Firefox/59.0 KinescopePlayerFlutter/0.2.2');
+        ? 'Mozilla/5.0 (iPad; CPU iPhone OS 13_2 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) KinescopePlayerFlutter/0.2.3'
+        : 'Mozilla/5.0 (Android 9.0; Mobile; rv:59.0) Gecko/59.0 Firefox/59.0 KinescopePlayerFlutter/0.2.3');
   }
 
   // ignore: member-ordering-extended

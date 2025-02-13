@@ -228,7 +228,8 @@ class _KinescopePlayerWebState extends State<KinescopePlayerWeb> {
       if (pm.action == 'flutter_action_time_update') {
         try {
           widget.controller.timeUpdateController.add(
-            PlayerTimeUpdateData.fromJson(pm.value as Map<String, dynamic>),
+            KinescopePlayerTimeUpdate.fromJson(
+                pm.value as Map<String, dynamic>),
           );
         } catch (e) {
           debugPrint('Error decoding time update data: $e');
