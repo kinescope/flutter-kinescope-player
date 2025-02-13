@@ -110,12 +110,14 @@ class _KinescopePlayerState extends State<KinescopePlayerDevice> {
         JavaScriptChannelParams(
           name: 'Events',
           onMessageReceived: (message) {
-            widget.controller.statusController.add(
-              KinescopePlayerStatus.values.firstWhere(
-                (value) => value.toString() == message.message,
-                orElse: () => KinescopePlayerStatus.unknown,
-              ),
-            );
+            if (!widget.controller.statusController.isClosed) {
+              widget.controller.statusController.add(
+                KinescopePlayerStatus.values.firstWhere(
+                  (value) => value.toString() == message.message,
+                  orElse: () => KinescopePlayerStatus.unknown,
+                ),
+              );
+            }
           },
         ),
       )
