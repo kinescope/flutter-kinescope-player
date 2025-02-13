@@ -12,6 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import 'dart:async';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -48,6 +50,9 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   final _textEditingController = TextEditingController(text: _initialVideoId);
   late KinescopePlayerController _kinescopeController;
+  late StreamSubscription<PlayerTimeUpdateData> subscriptionTimeUpdate;
+  late double timeCurrentPosition = 0;
+  late int timeCurrentPositionPercent = 0;
 
   @override
   void initState() {
@@ -75,10 +80,20 @@ class _HomePageState extends State<HomePage> {
         // t: 20,
       ),
     );
+
+    subscriptionTimeUpdate = _kinescopeController.timeUpdateStream.listen(
+      (item) => setState(
+        () {
+          timeCurrentPosition = item.currentTime!;
+          timeCurrentPositionPercent = item.percent!;
+        },
+      ),
+    );
   }
 
   @override
   void dispose() {
+    subscriptionTimeUpdate.cancel();
     _onExitFullScreen();
     super.dispose();
   }
@@ -185,11 +200,18 @@ class _HomePageState extends State<HomePage> {
                   color: Theme.of(context).primaryColor,
                   borderRadius: BorderRadius.circular(16),
                 ),
-                child: Center(
-                  child: Text(
-                    'KinescopePlayerStatus: ${snapshot.data}',
-                    style: const TextStyle(color: Colors.white),
-                  ),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Text(
+                      'KinescopePlayerStatus: ${snapshot.data}',
+                      style: const TextStyle(color: Colors.white),
+                    ),
+                    Text(
+                      'PlayerTimeUpdateData: $timeCurrentPosition $timeCurrentPositionPercent%',
+                      style: const TextStyle(color: Colors.white),
+                    ),
+                  ],
                 ),
               ),
             ],

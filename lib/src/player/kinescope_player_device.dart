@@ -13,6 +13,7 @@
 // limitations under the License.
 
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/widgets.dart';
 
@@ -21,6 +22,7 @@ import 'package:webview_flutter_platform_interface/webview_flutter_platform_inte
 import 'package:webview_flutter_wkwebview/webview_flutter_wkwebview.dart';
 
 import '../data/player_status.dart';
+import '../data/player_time_update.dart';
 import '../kinescope_player_controller.dart';
 import '../utils/uri_builder.dart';
 
@@ -108,12 +110,14 @@ class _KinescopePlayerState extends State<KinescopePlayerDevice> {
         JavaScriptChannelParams(
           name: 'Events',
           onMessageReceived: (message) {
-            widget.controller.statusController.add(
-              KinescopePlayerStatus.values.firstWhere(
-                (value) => value.toString() == message.message,
-                orElse: () => KinescopePlayerStatus.unknown,
-              ),
-            );
+            if (!widget.controller.statusController.isClosed) {
+              widget.controller.statusController.add(
+                KinescopePlayerStatus.values.firstWhere(
+                  (value) => value.toString() == message.message,
+                  orElse: () => KinescopePlayerStatus.unknown,
+                ),
+              );
+            }
           },
         ),
       )
@@ -156,6 +160,20 @@ class _KinescopePlayerState extends State<KinescopePlayerDevice> {
               if (!isFullscreen &&
                   widget.controller.parameters.onExitFullScreen != null) {
                 widget.controller.parameters.onExitFullScreen!();
+              }
+            }
+          },
+        ),
+      )
+      ..addJavaScriptChannel(
+        JavaScriptChannelParams(
+          name: 'TimeUpdate',
+          onMessageReceived: (message) {
+            if (message.message.contains('currentTime')) {
+              final data = jsonDecode(message.message) as Map<String, dynamic>;
+              if (!widget.controller.timeUpdateController.isClosed) {
+                widget.controller.timeUpdateController
+                    .add(PlayerTimeUpdateData.fromJson(data));
               }
             }
           },
@@ -352,9 +370,10 @@ class _KinescopePlayerState extends State<KinescopePlayerDevice> {
                         player.on(player.Events.Ready, function (event) { Events.postMessage('ready'); });
                         player.on(player.Events.Playing, function (event) { Events.postMessage('playing'); });
                         player.on(player.Events.Waiting, function (event) { Events.postMessage('waiting'); });
-                        player.on(player.Events.Pause, function (event) { Events.postMessage( 'pause'); });
+                        player.on(player.Events.Pause, function (event) { Events.postMessage('pause'); });
                         player.on(player.Events.Ended, function (event) { Events.postMessage('ended'); });
                         player.on(player.Events.FullscreenChange, onFullScreen);
+                        player.on(player.Events.TimeUpdate, onTimeUpdate); 
                     });
             }
         }
@@ -415,6 +434,10 @@ class _KinescopePlayerState extends State<KinescopePlayerDevice> {
 
         function onFullScreen(arg) {
           FullScreen.postMessage(arg.data.isFullscreen);
+        }
+
+        function onTimeUpdate(arg) {
+          TimeUpdate.postMessage(JSON.stringify(arg.data));
         }
     </script>
 </head>

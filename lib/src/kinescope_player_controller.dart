@@ -13,9 +13,9 @@
 // limitations under the License.
 
 import 'dart:async';
-
 import 'package:flutter_kinescope_sdk/src/data/player_parameters.dart';
 import 'package:flutter_kinescope_sdk/src/data/player_status.dart';
+import 'package:flutter_kinescope_sdk/src/data/player_time_update.dart';
 import 'package:flutter_kinescope_sdk/src/player/kinescope_player_navigation.dart';
 
 /// Controls a Kinescope player, and provides status updates using [status] stream.
@@ -39,11 +39,21 @@ class KinescopePlayerController {
   /// Currently playing video id
   String get videoId => _videoId;
 
+  /// StreamController for timeUpdate stream.
+  final StreamController<PlayerTimeUpdateData> timeUpdateController =
+      StreamController<PlayerTimeUpdateData>.broadcast();
+
+  // [Stream] that provides current time of the video
+  Stream<PlayerTimeUpdateData> get timeUpdateStream =>
+      timeUpdateController.stream;
+
   KinescopePlayerController(
     /// The video id with which the player initializes.
     String videoId, {
     this.parameters = const PlayerParameters(),
-  }) : _videoId = videoId;
+  }) : _videoId = videoId {
+    timeUpdateStream;
+  }
 
   /// Loads the video as per the [videoId] provided.
   void load(String videoId) {
@@ -101,8 +111,9 @@ class KinescopePlayerController {
     controllerProxy.unmute();
   }
 
-  /// Close [statusController]
+  /// Close [statusController] and [timeUpdateController] stream.
   void dispose() {
     statusController.close();
+    timeUpdateController.close();
   }
 }
