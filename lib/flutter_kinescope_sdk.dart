@@ -14,5 +14,6 @@
 
 export 'src/data/player_parameters.dart';
 export 'src/data/player_status.dart';
+export 'src/data/player_time_update.dart';
 export 'src/kinescope_player_controller.dart';
 export 'src/player/kinescope_player.dart';
