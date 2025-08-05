@@ -92,8 +92,7 @@ class _KinescopePlayerState extends State<KinescopePlayerDevice> {
           const PlatformNavigationDelegateCreationParams(),
         )
           ..setOnNavigationRequest((request) {
-            if (!request.url.contains(_kinescopeUri) &&
-                !request.url.contains(baseHost)) {
+            if (!request.url.contains(_kinescopeUri) && !request.url.contains(baseHost)) {
               debugPrint('blocking navigation to ${request.url}');
               return NavigationDecision.prevent;
             }
@@ -153,12 +152,10 @@ class _KinescopePlayerState extends State<KinescopePlayerDevice> {
           onMessageReceived: (message) {
             final dynamic isFullscreen = bool.parse(message.message);
             if (isFullscreen is bool) {
-              if (isFullscreen &&
-                  widget.controller.parameters.onEnterFullScreen != null) {
+              if (isFullscreen && widget.controller.parameters.onEnterFullScreen != null) {
                 widget.controller.parameters.onEnterFullScreen!();
               }
-              if (!isFullscreen &&
-                  widget.controller.parameters.onExitFullScreen != null) {
+              if (!isFullscreen && widget.controller.parameters.onExitFullScreen != null) {
                 widget.controller.parameters.onExitFullScreen!();
               }
             }
@@ -316,6 +313,50 @@ class _KinescopePlayerState extends State<KinescopePlayerDevice> {
             height: 100%;
             left: 0;
             top: 0;
+        }
+        .kinescope-player .kinescope-player-controls,
+        .kinescope-player .kinescope-player-settings,
+        .kinescope-player .kinescope-player-quality-menu,
+        .kinescope-player .kinescope-player-speed-menu,
+        .kinescope-player [class*="menu"],
+        .kinescope-player [class*="dropdown"],
+        .kinescope-player [class*="settings"] {
+            max-height: 60vh !important;
+            overflow-y: auto !important;
+            overflow-x: hidden !important;
+            -webkit-overflow-scrolling: touch !important;
+        }
+        
+        .kinescope-player [class*="menu"]::-webkit-scrollbar,
+        .kinescope-player [class*="dropdown"]::-webkit-scrollbar {
+            width: 4px !important;
+        }
+        
+        .kinescope-player [class*="menu"]::-webkit-scrollbar-track,
+        .kinescope-player [class*="dropdown"]::-webkit-scrollbar-track {
+            background: rgba(0,0,0,0.1) !important;
+        }
+        
+        .kinescope-player [class*="menu"]::-webkit-scrollbar-thumb,
+        .kinescope-player [class*="dropdown"]::-webkit-scrollbar-thumb {
+            background: rgba(255,255,255,0.5) !important;
+            border-radius: 2px !important;
+        }
+        
+        @media (max-width: 480px) {
+            .kinescope-player [class*="menu"] button,
+            .kinescope-player [class*="dropdown"] button,
+            .kinescope-player [class*="settings"] button {
+                min-height: 44px !important;
+                padding: 8px 12px !important;
+                font-size: 14px !important;
+            }
+            
+            .kinescope-player [class*="menu"],
+            .kinescope-player [class*="dropdown"],
+            .kinescope-player [class*="settings"] {
+                max-height: 50vh !important;
+            }
         }
     </style>
 
