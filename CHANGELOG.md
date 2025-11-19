@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.2.4
+
+- fix mobile html
+
 ## 0.2.3
 
 - Added `KinescopePlayerController` with stream providing `KinescopePlayerTimeUpdate`

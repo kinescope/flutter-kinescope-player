@@ -64,11 +64,9 @@ class _KinescopePlayerState extends State<KinescopePlayerDevice> {
     super.initState();
     videoId = widget.controller.videoId;
     externalId = widget.controller.parameters.externalId ?? '';
-    baseUrl = widget.controller.parameters.baseUrl ??
-        Uri(
-          scheme: _scheme,
-          host: _kinescopeUri,
-        ).toString();
+    baseUrl =
+        widget.controller.parameters.baseUrl ??
+        Uri(scheme: _scheme, host: _kinescopeUri).toString();
     baseHost = Uri.parse(baseUrl).host;
 
     late final PlatformWebViewControllerCreationParams params;
@@ -89,8 +87,8 @@ class _KinescopePlayerState extends State<KinescopePlayerDevice> {
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
       ..setPlatformNavigationDelegate(
         PlatformNavigationDelegate(
-          const PlatformNavigationDelegateCreationParams(),
-        )
+            const PlatformNavigationDelegateCreationParams(),
+          )
           ..setOnNavigationRequest((request) {
             if (!request.url.contains(_kinescopeUri) &&
                 !request.url.contains(baseHost)) {
@@ -100,11 +98,9 @@ class _KinescopePlayerState extends State<KinescopePlayerDevice> {
             debugPrint('allowing navigation to ${request.url}');
             return NavigationDecision.navigate;
           })
-          ..setOnUrlChange(
-            (change) {
-              debugPrint('url change to ${change.url}');
-            },
-          ),
+          ..setOnUrlChange((change) {
+            debugPrint('url change to ${change.url}');
+          }),
       )
       ..addJavaScriptChannel(
         JavaScriptChannelParams(
@@ -172,21 +168,20 @@ class _KinescopePlayerState extends State<KinescopePlayerDevice> {
             if (message.message.contains('currentTime')) {
               final data = jsonDecode(message.message) as Map<String, dynamic>;
               if (!widget.controller.timeUpdateController.isClosed) {
-                widget.controller.timeUpdateController
-                    .add(KinescopePlayerTimeUpdate.fromJson(data));
+                widget.controller.timeUpdateController.add(
+                  KinescopePlayerTimeUpdate.fromJson(data),
+                );
               }
             }
           },
         ),
       )
-      ..setOnPlatformPermissionRequest(
-        (request) {
-          debugPrint(
-            'requesting permissions for ${request.types.map((type) => type.name)}',
-          );
-          request.grant();
-        },
-      )
+      ..setOnPlatformPermissionRequest((request) {
+        debugPrint(
+          'requesting permissions for ${request.types.map((type) => type.name)}',
+        );
+        request.grant();
+      })
       ..setOnConsoleMessage((message) {
         debugPrint('js: ${message.message}');
       })
@@ -220,9 +215,7 @@ class _KinescopePlayerState extends State<KinescopePlayerDevice> {
   }
 
   void _proxyLoadVideo(String videoId) {
-    controller.runJavaScript(
-      'loadVideo("$videoId");',
-    );
+    controller.runJavaScript('loadVideo("$videoId");');
   }
 
   void _proxyPlay() {
@@ -240,9 +233,7 @@ class _KinescopePlayerState extends State<KinescopePlayerDevice> {
   Future<Duration> _proxyGetCurrentTime() async {
     getCurrentTimeCompleter = Completer<Duration>();
 
-    await controller.runJavaScript(
-      'getCurrentTime();',
-    );
+    await controller.runJavaScript('getCurrentTime();');
 
     final time = await getCurrentTimeCompleter?.future;
 
@@ -252,9 +243,7 @@ class _KinescopePlayerState extends State<KinescopePlayerDevice> {
   Future<Duration> _proxyGetDuration() async {
     getDurationCompleter = Completer<Duration>();
 
-    await controller.runJavaScript(
-      'getDuration();',
-    );
+    await controller.runJavaScript('getDuration();');
 
     final duration = await getDurationCompleter?.future;
 
@@ -262,9 +251,7 @@ class _KinescopePlayerState extends State<KinescopePlayerDevice> {
   }
 
   void _proxySeekTo(Duration duration) {
-    controller.runJavaScript(
-      'seekTo(${duration.inSeconds});',
-    );
+    controller.runJavaScript('seekTo(${duration.inSeconds});');
   }
 
   void _proxySetVolume(double value) {
@@ -291,12 +278,13 @@ class _KinescopePlayerState extends State<KinescopePlayerDevice> {
 
   String? getUserArgent() {
     return (Platform.isIOS
-        ? 'Mozilla/5.0 (iPad; CPU iPhone OS 13_2 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) KinescopePlayerFlutter/0.2.3'
-        : 'Mozilla/5.0 (Android 9.0; Mobile; rv:59.0) Gecko/59.0 Firefox/59.0 KinescopePlayerFlutter/0.2.3');
+        ? 'Mozilla/5.0 (iPad; CPU iPhone OS 13_2 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) KinescopePlayerFlutter/0.2.4'
+        : 'Mozilla/5.0 (Android 9.0; Mobile; rv:59.0) Gecko/59.0 Firefox/59.0 KinescopePlayerFlutter/0.2.4');
   }
 
   // ignore: member-ordering-extended
-  String get _player => '''
+  String get _player =>
+      '''
 <!DOCTYPE html>
 <html>
 
