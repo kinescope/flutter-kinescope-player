@@ -27,6 +27,18 @@ void main() {
           equals('https://kinescope.io/test'),
         );
       });
+
+      test('appends drmAuthToken query', () {
+        final uri = UriBuilder.buildVideoUri(
+          videoId: 'test',
+          drmAuthToken: 'token-123',
+        );
+
+        expect(
+          uri.toString(),
+          equals('https://kinescope.io/test?drmauthtoken=token-123'),
+        );
+      });
     });
 
     group('parametersToBehavior', () {
@@ -45,7 +57,7 @@ void main() {
         expect(
           UriBuilder.parametersToBehavior(params),
           equals(
-            {'autoplay': 'true', 'muted': 'true', 'loop': 'true'},
+            {'autoPlay': 'true', 'muted': 'true', 'loop': 'true'},
           ),
         );
       });

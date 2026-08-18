@@ -215,7 +215,11 @@ class _KinescopePlayerState extends State<KinescopePlayerDevice> {
   }
 
   void _proxyLoadVideo(String videoId) {
-    controller.runJavaScript('loadVideo("$videoId");');
+    final videoUri = UriBuilder.buildVideoUri(
+      videoId: videoId,
+      drmAuthToken: widget.controller.parameters.drmAuthToken,
+    );
+    controller.runJavaScript('loadVideo("$videoUri");');
   }
 
   void _proxyPlay() {
@@ -278,8 +282,8 @@ class _KinescopePlayerState extends State<KinescopePlayerDevice> {
 
   String? getUserArgent() {
     return (Platform.isIOS
-        ? 'Mozilla/5.0 (iPad; CPU iPhone OS 13_2 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) KinescopePlayerFlutter/0.2.4'
-        : 'Mozilla/5.0 (Android 9.0; Mobile; rv:59.0) Gecko/59.0 Firefox/59.0 KinescopePlayerFlutter/0.2.4');
+        ? 'Mozilla/5.0 (iPad; CPU iPhone OS 13_2 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) KinescopePlayerFlutter/0.2.5'
+        : 'Mozilla/5.0 (Android 9.0; Mobile; rv:59.0) Gecko/59.0 Firefox/59.0 KinescopePlayerFlutter/0.2.5');
   }
 
   // ignore: member-ordering-extended
@@ -316,7 +320,7 @@ class _KinescopePlayerState extends State<KinescopePlayerDevice> {
 
         let kinescopePlayer = null;
 
-        let initialVideoUri = '${UriBuilder.buildVideoUri(videoId: videoId)}';
+        let initialVideoUri = '${UriBuilder.buildVideoUri(videoId: videoId, drmAuthToken: widget.controller.parameters.drmAuthToken)}';
 
         function onKinescopeIframeAPIReady(playerFactory) {
             kinescopePlayerFactory = playerFactory;

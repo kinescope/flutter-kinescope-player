@@ -113,10 +113,14 @@ class _KinescopePlayerWebState extends State<KinescopePlayerWeb> {
     final _ui = jsonEncode(
         UriBuilder.parametersToUI(widget.controller.parameters, escape: false));
     final _time = UriBuilder.parameterSeekTo(widget.controller.parameters);
+    final videoUri = UriBuilder.buildVideoUri(
+      videoId: videoId,
+      drmAuthToken: widget.controller.parameters.drmAuthToken,
+    );
 
     postMessage({
       'action': 'flutter_player_load_video',
-      'value': videoId,
+      'value': videoUri.toString(),
       'externalId': _externalId,
       'behaviour': _behaviour,
       'ui': _ui,
@@ -180,7 +184,7 @@ class _KinescopePlayerWebState extends State<KinescopePlayerWeb> {
 
       if (pm.action == 'flutter_player_event') {
         if (videoId.isNotEmpty) {
-          _proxyLoadVideo('${UriBuilder.buildVideoUri(videoId: videoId)}');
+          _proxyLoadVideo(videoId);
         }
       }
 

@@ -37,11 +37,32 @@ class PlayerParameters {
   final WatermarkParameters watermark;
   final void Function()? onEnterFullScreen;
   final void Function()? onExitFullScreen;
+  final void Function()? onEnterPictureInPicture;
+  final void Function()? onExitPictureInPicture;
 
   /// Sets the user-agent.
   final String? userAgent;
   final String? externalId;
   final String? baseUrl;
+
+  /// Authorization Backend token (`drmauthtoken`) for DRM-protected videos.
+  ///
+  /// Android: applied to native player options before `loadVideo`.
+  /// iOS / Web: appended as `?drmauthtoken=` on the embed video URL.
+  final String? drmAuthToken;
+
+  /// Whether to show the built-in default poster when metadata has no poster URL.
+  ///
+  /// Android native only (kotlin-kinescope-player 0.1.5+). Default is `true`.
+  final bool? showDefaultPoster;
+
+  /// HTTP `Referer` for metadata / DRM requests when the video has **domain restrictions**.
+  ///
+  /// Android: applied to native player options / `setReferer` before `loadVideo`.
+  /// Must match a domain allow-listed in the Kinescope dashboard
+  /// (default native referer is `https://kinescope.io/`).
+  /// This does not open embedding on other sites.
+  final String? referer;
 
   const PlayerParameters({
     this.autofocus,
@@ -62,10 +83,15 @@ class PlayerParameters {
     this.userAgent,
     this.externalId,
     this.baseUrl,
+    this.drmAuthToken,
+    this.showDefaultPoster,
+    this.referer,
     this.disableFiles,
     this.watermark = const WatermarkParameters(),
     this.onEnterFullScreen,
     this.onExitFullScreen,
+    this.onEnterPictureInPicture,
+    this.onExitPictureInPicture,
   });
 }
 

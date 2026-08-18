@@ -1,5 +1,20 @@
 # Changelog
 
+
+## 0.2.5
+
+Android player aligned with **kotlin-kinescope-player 0.1.5** 
+
+- Native dependency `0.1.5`
+- `PlayerParameters.drmAuthToken` — Authorization Backend token (Android options; iOS/Web `?drmauthtoken=` on the video URL)
+- `PlayerParameters.showDefaultPoster` — opt out of the built-in default poster (Android)
+- `PlayerParameters.referer` — HTTP Referer for **domain restrictions** (Android `setReferer` / options; default remains `https://kinescope.io/`)
+- Offline library UI: in-progress downloads with progress; optimistic remove hides Media3 `removing` rows
+- DRM download probe: release metadata player early, serialize Widevine probes; license-acquire timeout frees the probe queue if the CDM callback never returns
+- Multiple offline PlatformViews: hide/exitFullscreen target a single `contentId` (no longer broadcast to every session)
+- PiP orphan teardown: null-safe detach after dispose during PiP so `release()` still runs
+- Docs: `doc/api.md`, `doc/android-native.md` (DRM auth + domain restrictions)
+
 ## 0.2.4
 
 - fix mobile html

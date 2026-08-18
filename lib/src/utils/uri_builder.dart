@@ -20,12 +20,17 @@ const _kinescopeUri = 'kinescope.io';
 class UriBuilder {
   static Uri buildVideoUri({
     required String videoId,
-  }) =>
-      Uri(
-        scheme: _scheme,
-        host: _kinescopeUri,
-        pathSegments: [videoId],
-      );
+    String? drmAuthToken,
+  }) {
+    final token = drmAuthToken?.trim();
+    final hasToken = token != null && token.isNotEmpty;
+    return Uri(
+      scheme: _scheme,
+      host: _kinescopeUri,
+      pathSegments: [videoId],
+      queryParameters: hasToken ? {'drmauthtoken': token} : null,
+    );
+  }
 
   static int? parameterSeekTo(
     PlayerParameters args,

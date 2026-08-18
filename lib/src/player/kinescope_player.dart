@@ -16,13 +16,10 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 
 import '../kinescope_player_controller.dart';
+import 'kinescope_player_android.dart';
 import 'kinescope_player_device.dart';
 import 'kinescope_player_web.dart'
     if (dart.library.io) 'kinescope_player_web_vain.dart';
-
-final kIsMobile =
-    defaultTargetPlatform == TargetPlatform.iOS ||
-    defaultTargetPlatform == TargetPlatform.android;
 
 /// A widget to play or stream Kinescope videos using the official embedded API
 ///
@@ -58,8 +55,16 @@ class KinescopePlayer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (kIsMobile && !kIsWeb) {
-      return KinescopePlayerDevice(controller: controller);
+    if (!kIsWeb && defaultTargetPlatform == TargetPlatform.android) {
+      return KinescopePlayerAndroid(
+        controller: controller,
+        aspectRatio: aspectRatio,
+      );
+    } else if (!kIsWeb && defaultTargetPlatform == TargetPlatform.iOS) {
+      return KinescopePlayerDevice(
+        controller: controller,
+        aspectRatio: aspectRatio,
+      );
     } else if (kIsWeb) {
       return KinescopePlayerWeb(controller: controller);
     } else {

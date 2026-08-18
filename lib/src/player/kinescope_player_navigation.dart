@@ -12,8 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import '../utils/uri_builder.dart';
-
 typedef LoadVideoCallback = void Function(String videoId);
 typedef MethodCallback = void Function();
 typedef SeekToCallback = void Function(Duration offset);
@@ -36,7 +34,7 @@ class ControllerProxy {
   void loadVideo(String videoId) {
     final callback = _loadVideoCallback;
     if (callback != null) {
-      callback('${UriBuilder.buildVideoUri(videoId: videoId)}');
+      callback(videoId);
     }
   }
 
