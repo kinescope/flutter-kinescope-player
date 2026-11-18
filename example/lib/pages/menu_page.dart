@@ -23,7 +23,20 @@ import 'package:flutter/material.dart';
 class MenuPage extends StatelessWidget {
   const MenuPage({Key? key}) : super(key: key);
 
-  bool get _offlineSupported => !kIsWeb && Platform.isAndroid;
+  bool get _offlineSupported =>
+      !kIsWeb && (Platform.isAndroid || Platform.isIOS);
+
+  void _openPlayer(
+    BuildContext context, {
+    String videoId = initialVideoId,
+    String title = 'Player view',
+  }) {
+    Navigator.of(context).push(
+      MaterialPageRoute<void>(
+        builder: (_) => PlayerPage(videoId: videoId, title: title),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -31,21 +44,35 @@ class MenuPage extends StatelessWidget {
       backgroundColor: DemoTheme.demoWhite,
       body: SafeArea(
         child: Center(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 32),
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 24),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 ElevatedButton(
                   style: DemoTheme.accentButtonStyle(),
-                  onPressed: () {
-                    Navigator.of(context).push(
-                      MaterialPageRoute<void>(
-                        builder: (_) => const PlayerPage(),
-                      ),
-                    );
-                  },
+                  onPressed: () => _openPlayer(context),
                   child: const Text('Player view'),
+                ),
+                const SizedBox(height: 25),
+                ElevatedButton(
+                  style: DemoTheme.accentButtonStyle(),
+                  onPressed: () => _openPlayer(
+                    context,
+                    videoId: subtitlesVideoId,
+                    title: 'Subtitles',
+                  ),
+                  child: const Text('Subtitles'),
+                ),
+                const SizedBox(height: 25),
+                ElevatedButton(
+                  style: DemoTheme.accentButtonStyle(),
+                  onPressed: () => _openPlayer(
+                    context,
+                    videoId: chaptersVideoId,
+                    title: 'Chapters',
+                  ),
+                  child: const Text('Chapters'),
                 ),
                 const SizedBox(height: 25),
                 ElevatedButton(
@@ -62,7 +89,7 @@ class MenuPage extends StatelessWidget {
                   child: Text(
                     _offlineSupported
                         ? 'Offline viewing'
-                        : 'Offline viewing (Android only)',
+                        : 'Offline viewing (Android and iOS)',
                   ),
                 ),
               ],

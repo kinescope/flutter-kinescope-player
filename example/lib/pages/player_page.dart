@@ -18,16 +18,25 @@ import 'package:flutter/material.dart';
 import 'package:flutter_kinescope_sdk/flutter_kinescope_sdk.dart';
 
 const initialVideoId = 'sEsxJQ7Hi4QLWwbmZEFfgz';
+const subtitlesVideoId = '4CCHqgs4MkL33akyL7jJtS';
+const chaptersVideoId = 'mMLazQrkPgThuhB7kkzQ69';
 
 class PlayerPage extends StatefulWidget {
-  const PlayerPage({Key? key}) : super(key: key);
+  const PlayerPage({
+    Key? key,
+    this.videoId = initialVideoId,
+    this.title = 'Player view',
+  }) : super(key: key);
+
+  final String videoId;
+  final String title;
 
   @override
   State<PlayerPage> createState() => _PlayerPageState();
 }
 
 class _PlayerPageState extends State<PlayerPage> {
-  final _textEditingController = TextEditingController(text: initialVideoId);
+  late final TextEditingController _textEditingController;
   late KinescopePlayerController _kinescopeController;
   late StreamSubscription<KinescopePlayerTimeUpdate> _subscriptionTimeUpdate;
   double _timeCurrentPosition = 0;
@@ -37,8 +46,9 @@ class _PlayerPageState extends State<PlayerPage> {
   void initState() {
     super.initState();
 
+    _textEditingController = TextEditingController(text: widget.videoId);
     _kinescopeController = KinescopePlayerController(
-      initialVideoId,
+      widget.videoId,
       parameters: PlayerParameters(
         autoplay: true,
         texttrack: true,
@@ -62,6 +72,7 @@ class _PlayerPageState extends State<PlayerPage> {
   @override
   void dispose() {
     _subscriptionTimeUpdate.cancel();
+    _textEditingController.dispose();
     super.dispose();
   }
 
@@ -77,7 +88,7 @@ class _PlayerPageState extends State<PlayerPage> {
 
         return Scaffold(
           appBar: AppBar(
-            title: const Text('Player view'),
+            title: Text(widget.title),
           ),
           body: Column(
             children: [

@@ -47,8 +47,8 @@ class PlayerParameters {
 
   /// Authorization Backend token (`drmauthtoken`) for DRM-protected videos.
   ///
-  /// Android: applied to native player options before `loadVideo`.
-  /// iOS / Web: appended as `?drmauthtoken=` on the embed video URL.
+  /// Android and iOS: applied to native player options before `loadVideo`.
+  /// Web: appended as `?drmauthtoken=` on the embed video URL.
   final String? drmAuthToken;
 
   /// Whether to show the built-in default poster when metadata has no poster URL.
@@ -58,7 +58,7 @@ class PlayerParameters {
 
   /// HTTP `Referer` for metadata / DRM requests when the video has **domain restrictions**.
   ///
-  /// Android: applied to native player options / `setReferer` before `loadVideo`.
+  /// Android and iOS: applied before `loadVideo` (iOS sets it on `KinescopeConfig`).
   /// Must match a domain allow-listed in the Kinescope dashboard
   /// (default native referer is `https://kinescope.io/`).
   /// This does not open embedding on other sites.

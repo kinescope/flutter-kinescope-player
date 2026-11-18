@@ -45,7 +45,7 @@ class _OfflineDownloadPageState extends State<OfflineDownloadPage> {
 
   Future<void> _init() async {
     await _downloads.initialize();
-    _subscription = _downloads.updates.listen((_) => _reload(silent: true));
+    _subscription = _downloads.updates.listen(_onDownloadUpdate);
     _startProgressPolling();
     await _reload();
   }
@@ -102,6 +102,30 @@ class _OfflineDownloadPageState extends State<OfflineDownloadPage> {
     } finally {
       _reloadInFlight = false;
     }
+  }
+
+  void _onDownloadUpdate(KinescopeDownloadUpdate update) {
+    final item = update.download;
+    if (!mounted || !item.isVisibleInLibrary) {
+      return;
+    }
+    setState(() {
+      final next = List<KinescopeDownloadInfo>.from(_items);
+      final index = next.indexWhere((entry) => entry.contentId == item.contentId);
+      if (index >= 0) {
+        next[index] = item;
+      } else {
+        next.add(item);
+      }
+      next.sort((a, b) {
+        final rank = _stateRank(a) - _stateRank(b);
+        if (rank != 0) {
+          return rank;
+        }
+        return (a.title ?? a.contentId).compareTo(b.title ?? b.contentId);
+      });
+      _items = next;
+    });
   }
 
   int _stateRank(KinescopeDownloadInfo item) {

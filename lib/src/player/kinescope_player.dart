@@ -17,11 +17,13 @@ import 'package:flutter/widgets.dart';
 
 import '../kinescope_player_controller.dart';
 import 'kinescope_player_android.dart';
-import 'kinescope_player_device.dart';
+import 'kinescope_player_ios.dart';
 import 'kinescope_player_web.dart'
     if (dart.library.io) 'kinescope_player_web_vain.dart';
 
-/// A widget to play or stream Kinescope videos using the official embedded API
+/// A widget to play or stream Kinescope videos.
+///
+/// Android and iOS use the native player. Web uses the embed.
 ///
 /// Using [KinescopePlayer] widget:
 ///
@@ -61,7 +63,7 @@ class KinescopePlayer extends StatelessWidget {
         aspectRatio: aspectRatio,
       );
     } else if (!kIsWeb && defaultTargetPlatform == TargetPlatform.iOS) {
-      return KinescopePlayerDevice(
+      return KinescopePlayerIos(
         controller: controller,
         aspectRatio: aspectRatio,
       );

@@ -94,7 +94,6 @@ class KinescopePlayerController {
 
   /// Set volume level
   /// (0..1, where 0 is 0% and 1 is 100%)
-  /// Works only on Android
   void setVolume(double value) {
     if (value > 0 || value <= 1) {
       controllerProxy.setVolume(value);
