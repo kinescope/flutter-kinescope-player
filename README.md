@@ -5,12 +5,12 @@
 Flutter plugin for the [Kinescope](https://kinescope.io/) video player.
 
 One Dart API (`KinescopePlayer` + `KinescopePlayerController`) on every platform.  
-Under the hood there are **two implementations**:
+Under the hood there are **three implementations**:
 
 | Part | Platforms | Engine |
 | ---- | --------- | ------ |
 | **Native** | Android | [`kotlin-kinescope-player` 0.1.5](https://github.com/kinescope/kotlin-kinescope-player) · ExoPlayer · native UI (fullscreen, PiP, settings, offline, DRM) |
-| **Native** | iOS | [`ios-kinescope-player` 1.0.2](https://github.com/kinescope/ios-kinescope-player) · AVPlayer · native UI (fullscreen, PiP, settings, offline) |
+| **Native** | iOS | [`ios-kinescope-player` 1.0.3](https://github.com/kinescope/ios-kinescope-player) · AVPlayer · native UI (fullscreen, PiP, settings, offline) |
 | **Embed** | Web | Kinescope iframe / JS API |
 
 ## Documentation
@@ -18,7 +18,7 @@ Under the hood there are **two implementations**:
 | | |
 | --- | --- |
 | [**Android (native)**](doc/android-native.md) | Setup, UI, PiP, orientation, offline / DRM, quality picker |
-| [**iOS (native)**](doc/ios-native.md) | KinescopeSDK 1.0.2, fullscreen, PiP, DRM token, offline |
+| [**iOS (native)**](doc/ios-native.md) | KinescopeSDK 1.0.3, fullscreen, PiP, DRM token, offline |
 | [**Web (embed)**](doc/embed-webview.md) | iframe / JS player, embed parameters |
 | [**Shared API**](doc/api.md) | `KinescopePlayerController`, shared `PlayerParameters` |
 | [Changelog](CHANGELOG.md) | Release history |

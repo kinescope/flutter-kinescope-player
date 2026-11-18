@@ -10,16 +10,16 @@ iOS uses the native player → [ios-native.md](ios-native.md).
 
 ## Not available here
 
-Native chrome, Picture-in-Picture, offline download, and `setVolume()` live in the native players:
+Native chrome, Picture-in-Picture, and offline download live in the native players:
 
 - [Android](android-native.md)
-- [iOS](ios-native.md) (`setVolume`, offline download, and offline playback)  
+- [iOS](ios-native.md)  
 
 ---
 
 ## Playback
 
-Same widget as on Android:
+Same widget as on Android and iOS:
 
 ```dart
 KinescopePlayer(
@@ -44,14 +44,14 @@ On Web, parameters map to embed query / options. Full list → [api.md](api.md).
 
 ## Useful embed parameters
 
-Full table (including defaults and Android support): [api.md — PlayerParameters](api.md#playerparameters).
+Full table (defaults and Android / iOS / Web): [api.md — PlayerParameters](api.md#playerparameters).
 
 Highlights for embed-only options:
 
 | Parameter | |
 | --------- | --- |
 | `baseUrl` | Custom embed host |
-| `userAgent` | Override User-Agent |
+| `userAgent` | Field exists; the current embed player does not apply it |
 | `preload` | Preload metadata |
 | `autofocus` / `autopause` | Focus / pause behaviour |
 | `dnt` | Disable analytics |
@@ -64,6 +64,4 @@ Highlights for embed-only options:
 
 ## Events & controller
 
-`play` / `pause` / `seek` / `status` / `timeUpdate` go through the same `KinescopePlayerController` as on Android and iOS.
-
-`setVolume()` is **not** supported on Web.
+`play` / `pause` / `seek` / `mute` / `setVolume` / `status` / `timeUpdate` go through the same `KinescopePlayerController` as on Android and iOS. `setVolume()` is forwarded to the embed JS player.

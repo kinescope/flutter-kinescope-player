@@ -12,7 +12,7 @@ let package = Package(
     ],
     dependencies: [
         .package(name: "FlutterFramework", path: "../FlutterFramework"),
-        .package(url: "https://github.com/kinescope/ios-kinescope-player.git", exact: "1.0.2"),
+        .package(url: "https://github.com/kinescope/ios-kinescope-player.git", exact: "1.0.3"),
     ],
     targets: [
         .target(

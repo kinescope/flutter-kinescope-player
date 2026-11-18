@@ -30,7 +30,7 @@ final controller = KinescopePlayerController(
 );
 
 controller.status.listen((status) {
-  // KinescopePlayerStatus: play, pause, ended, …
+  // KinescopePlayerStatus: init, ready, playing, waiting, pause, ended, unknown
 });
 
 controller.timeUpdateStream.listen((update) {
@@ -45,55 +45,56 @@ controller.timeUpdateStream.listen((update) {
 | `play()` | Plays the currently cued / loaded video. | ✓ | ✓ | ✓ |
 | `pause()` | Pauses the currently playing video. | ✓ | ✓ | ✓ |
 | `stop()` | Stops and cancels loading of the current video. | ✓ | ✓ | ✓ |
-| `load(String videoId)` | Loads and plays the specified video. | ✓ | ✓ | ✓ |
+| `load(String videoId)` | Loads the specified video. Playback follows `autoplay`. | ✓ | ✓ | ✓ |
 | `getCurrentTime()` | Returns current position (`Future<Duration>`). | ✓ | ✓ | ✓ |
 | `getDuration()` | Returns duration of the video (`Future<Duration>`). | ✓ | ✓ | ✓ |
 | `seekTo(Duration position)` | Seeks to a specified time in the video. | ✓ | ✓ | ✓ |
 | `mute()` | Mutes the player. | ✓ | ✓ | ✓ |
 | `unmute()` | Unmutes the player. | ✓ | ✓ | ✓ |
-| `setVolume(double volume)` | Sets volume `0.0`–`1.0`. | ✓ | ✓ | — |
+| `setVolume(double volume)` | Sets volume `0.0`–`1.0`. Web forwards it to the embed JS player. | ✓ | ✓ | ✓ |
 | `dispose()` | Closes status and time-update streams. | ✓ | ✓ | ✓ |
 
 ---
 
 ## PlayerParameters
 
-Initial player options passed into `KinescopePlayerController`.
+Initial options for `KinescopePlayerController`.
 
-On **Web**, parameters map to the Kinescope iframe embed.
-On **Android** and **iOS**, the native player applies the columns below. Other values are ignored.
+Android and iOS pass a native subset into the player. Web maps parameters onto the Kinescope iframe. `—` means that platform ignores the value.
+
+On Android and iOS, an unset bool uses the default in the table. On Web, an unset value is omitted and the embed keeps its own default.
 
 ### All parameters
 
-| Parameter | Description | Default (typical) | Android | iOS | Web |
-| --------- | ----------- | ----------------- | :---: | :---: | :---: |
-| `autoplay` | Start playback when the player loads. | `false` / embed default | ✓ | ✓ | ✓ |
-| `muted` | Start muted. | embed default | ✓ | ✓ | ✓ |
-| `loop` | Restart the video automatically after it ends. | — | ✓ | ✓ | ✓ |
-| `playsinline` | Play inline. `false` opens native fullscreen after load on iOS. | — | ✓ | ✓ | ✓ |
-| `texttrack` | Enable subtitles on load (when available). On iOS, subtitles are chosen in the native settings menu. | — | ✓ | settings | ✓ |
-| `controls` | Show player controls. Native: master switch for chrome / option buttons. | — | ✓ | ✓ | ✓ |
-| `drmAuthToken` | Authorization Backend token (`drmauthtoken`) for DRM-protected videos. | — | ✓ | ✓ | ✓ |
-| `showDefaultPoster` | Built-in default poster when metadata has no poster URL. | `true` | ✓ | — | — |
-| `referer` | HTTP `Referer` when the video has **domain restrictions** in the dashboard. Must match an allow-listed domain. Default native referer is `https://kinescope.io/`. | — | ✓ | ✓ | — |
-| `autofocus` | Set focus to the player. | `true` (embed) | — | — | ✓ |
-| `autopause` | Pause when appropriate (embed behaviour). | — | — | — | ✓ |
-| `preload` | Preload video metadata. | `true` (embed) | — | — | ✓ |
-| `userAgent` | Overrides default User-Agent. | — | — | — | ✓ |
-| `externalId` | Any string that represents a user on an external system (analytics). | `''` | — | — | ✓ |
+| Parameter | What it does | Default | Android | iOS | Web |
+| --------- | ------------ | ------- | :---: | :---: | :---: |
+| `autoplay` | Start playback after the video is ready. On iOS the player starts, then pauses when this is `false`. | `false` | ✓ | ✓ | ✓ |
+| `muted` | Start muted. | `false` | ✓ | ✓ | ✓ |
+| `loop` | Replay from the start when playback ends. | `false` | ✓ | ✓ | ✓ |
+| `playsinline` | Stay inline. On iOS, `false` opens native fullscreen after the video loads. Android forwards the flag to the native player. | `true` | ✓ | ✓ | ✓ |
+| `texttrack` | Turn subtitles on at load when the video has them. iOS ignores the flag; the native chrome has its own subtitles button and a settings row. | unset | ✓ | menu | ✓ |
+| `controls` | Show controls. Android toggles play, seek, duration, options, fullscreen, and chapters. iOS `false` hides settings, fullscreen, PiP, AirPlay, subtitles, and download. | `true` | ✓ | ✓ | ✓ |
+| `drmAuthToken` | Authorization Backend token for DRM. Android: native options. iOS: metadata request (`KinescopePlayerConfig`). Web: `?drmauthtoken=` on the video URL. | — | ✓ | ✓ | ✓ |
+| `showDefaultPoster` | Built-in poster when metadata has no poster URL. | `true` | ✓ | — | — |
+| `referer` | HTTP `Referer` for dashboard **domain restrictions**. Must match an allow-listed domain. Does not open embedding on other sites. | `https://kinescope.io/` | ✓ | ✓ | — |
+| `autofocus` | Set focus to the player. | embed | — | — | ✓ |
+| `autopause` | Pause when appropriate (embed behaviour). | embed | — | — | ✓ |
+| `preload` | Preload video metadata. | embed | — | — | ✓ |
+| `externalId` | String that represents a user on an external system (analytics). | `''` | — | — | ✓ |
 | `baseUrl` | Custom embed host. | — | — | — | ✓ |
-| `dnt` | Disable sent analytics. | — | — | — | ✓ |
-| `background` | Disable controls; typically used with autoplay / muted / loop. | — | — | — | ✓ |
-| `t` | Seek the video to this time (seconds) on load. | — | — | — | ✓ |
-| `transparent` | Transparent background color. | — | — | — | ✓ |
-| `speedbtn` | Visibility of the playback rate button. | — | — | — | ✓ |
-| `header` | Visibility of the header. | — | — | — | ✓ |
-| `disableFiles` | Hide additional materials. | — | — | — | ✓ |
+| `dnt` | Disable sent analytics. | embed | — | — | ✓ |
+| `background` | Disable controls; typically used with autoplay, muted, and loop. | embed | — | — | ✓ |
+| `t` | Seek to this time (seconds) once the embed is ready. | — | — | — | ✓ |
+| `transparent` | Transparent background color. | embed | — | — | ✓ |
+| `speedbtn` | Visibility of the playback rate button. | embed | — | — | ✓ |
+| `header` | Visibility of the header. | embed | — | — | ✓ |
+| `disableFiles` | Hide additional materials. | embed | — | — | ✓ |
 | `watermark` | Watermark via [`WatermarkParameters`](#watermarkparameters) (`mode`, `text`). | empty | — | — | ✓ |
+| `userAgent` | Present on `PlayerParameters`. The current Android, iOS, and Web players do not apply it. | — | — | — | — |
 | `onEnterFullScreen` | Callback when entering fullscreen. | — | ✓ | ✓ | ✓ |
 | `onExitFullScreen` | Callback when exiting fullscreen. | — | ✓ | ✓ | ✓ |
-| `onEnterPictureInPicture` | Callback when entering PiP. iOS PiP is the native button, without this callback. | — | ✓ | — | — |
-| `onExitPictureInPicture` | Callback when exiting PiP. | — | ✓ | — | — |
+| `onEnterPictureInPicture` | Callback when entering PiP. iOS PiP is the system button and does not call this. | — | ✓ | — | — |
+| `onExitPictureInPicture` | Callback when exiting PiP. iOS does not call this. | — | ✓ | — | — |
 
 ### Example
 
@@ -110,7 +111,6 @@ const PlayerParameters(
   drmAuthToken: 'your-auth-backend-token',
   showDefaultPoster: true,
   referer: 'https://your-domain.com/',
-  userAgent: 'MyApp/1.0',
   externalId: 'user-123',
   watermark: WatermarkParameters(
     mode: 'regular',
@@ -142,5 +142,5 @@ const WatermarkParameters(
 | | |
 | --- | --- |
 | **Android native** | Setup, PiP, offline, chrome → [android-native.md](android-native.md) |
-| **iOS native** | KinescopeSDK 1.0.2, fullscreen, PiP, offline → [ios-native.md](ios-native.md) |
+| **iOS native** | KinescopeSDK 1.0.3, fullscreen, PiP, offline → [ios-native.md](ios-native.md) |
 | **Web embed** | iframe specifics → [embed-webview.md](embed-webview.md) |

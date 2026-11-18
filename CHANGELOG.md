@@ -3,7 +3,7 @@
 
 ## 0.2.6
 
-Android player aligned with **kotlin-kinescope-player 0.1.5**. iOS player switched from the WKWebView embed to **ios-kinescope-player 1.0.2** (`KinescopeSDK`).
+Android player aligned with **kotlin-kinescope-player 0.1.5**. iOS player switched from the WKWebView embed to **ios-kinescope-player 1.0.3** (`KinescopeSDK`).
 
 ### iOS
 
@@ -12,16 +12,15 @@ Android player aligned with **kotlin-kinescope-player 0.1.5**. iOS player switch
 - Fullscreen uses the native controller; Back leaves fullscreen before the route pops
 - Offline download and playback use the same `KinescopeOfflineDownload` / `KinescopeOfflinePlayer` API as Android
 - Offline playback keeps the rendition chosen at download time, so the gear shows that quality
-- Download progress updates at most twice per second per video
-- Docs: `doc/ios-native.md`. Web embed stays in `doc/embed-webview.md`
+- Download progress updates at most twice per second per video- Docs: `doc/ios-native.md`. Web embed stays in `doc/embed-webview.md`
 
 ### Android and shared
 
 - Native Android dependency `kotlin-kinescope-player` `0.1.5`
 - Example menu: Subtitles, Chapters, and Offline viewing
-- `PlayerParameters.drmAuthToken` — Authorization Backend token (Android options; iOS/Web `?drmauthtoken=` on the video URL)
+- `PlayerParameters.drmAuthToken` — Authorization Backend token (Android native options; iOS metadata request; Web `?drmauthtoken=` on the video URL)
 - `PlayerParameters.showDefaultPoster` — opt out of the built-in default poster (Android)
-- `PlayerParameters.referer` — HTTP Referer for **domain restrictions** (Android `setReferer` / options; default remains `https://kinescope.io/`)
+- `PlayerParameters.referer` — HTTP Referer for **domain restrictions** (Android `setReferer` / options; iOS `KinescopeConfig`; default remains `https://kinescope.io/`)
 - Offline library UI: in-progress downloads with progress; optimistic remove hides Media3 `removing` rows
 - DRM download probe: release metadata player early, serialize Widevine probes; license-acquire timeout frees the probe queue if the CDM callback never returns
 - Multiple offline PlatformViews: hide/exitFullscreen target a single `contentId` (no longer broadcast to every session)

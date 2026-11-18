@@ -6,7 +6,7 @@ Native side of the SDK: [`kotlin-kinescope-player` **0.1.5**](https://github.com
 
 ---
 
-## Android-only features
+## Android player
 
 | Feature | |
 | ------- | --- |
@@ -159,4 +159,4 @@ Omit `videoHeightPx` to download the highest available quality.
 
 `KinescopeOfflinePlayer` uses the same native chrome as online (FS, PiP, settings) and the same Back / pop guard.
 
-Quality bottom-sheet example: [example app](../example/lib/main.dart).
+Quality bottom-sheet example: [example app](../example/lib/pages/offline_add_download_page.dart).
