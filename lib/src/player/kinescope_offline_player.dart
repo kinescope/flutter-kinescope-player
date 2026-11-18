@@ -12,6 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import 'dart:async';
+
+import 'package:flutter/foundation.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_kinescope_sdk/src/data/player_parameters.dart';
@@ -27,7 +31,7 @@ const _androidViewKey = ValueKey<String>('kinescope_offline_player_view');
 /// Plays a video that was previously downloaded via [KinescopeOfflineDownload].
 ///
 /// Uses the same native KinescopePlayerView UI as the online player.
-/// Android only.
+/// Android and iOS.
 class KinescopeOfflinePlayer extends StatefulWidget {
   final String contentId;
   final PlayerParameters parameters;
@@ -60,6 +64,9 @@ class _KinescopeOfflinePlayerState extends State<KinescopeOfflinePlayer> {
   void dispose() {
     if (_isFullscreen) {
       applyKinescopeAndroidFullscreenUi(fullscreen: false);
+      if (defaultTargetPlatform == TargetPlatform.iOS) {
+        unawaited(SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge));
+      }
     }
     applyKinescopeAndroidPictureInPictureUi(pictureInPicture: false);
     _methodChannel.setMethodCallHandler(null);
@@ -73,12 +80,15 @@ class _KinescopeOfflinePlayerState extends State<KinescopeOfflinePlayer> {
       }
       widget.onFullscreenChanged?.call(true);
       widget.parameters.onEnterFullScreen?.call();
-      WidgetsBinding.instance.addPostFrameCallback((_) {
+      WidgetsBinding.instance.addPostFrameCallback((_) async {
         if (!mounted) {
           return;
         }
         setState(() => _isFullscreen = true);
         applyKinescopeAndroidFullscreenUi(fullscreen: true);
+        if (defaultTargetPlatform == TargetPlatform.iOS) {
+          await SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
+        }
       });
     } else if (call.method == 'onExitFullscreen') {
       if (!mounted) {
@@ -86,6 +96,9 @@ class _KinescopeOfflinePlayerState extends State<KinescopeOfflinePlayer> {
       }
       setState(() => _isFullscreen = false);
       applyKinescopeAndroidFullscreenUi(fullscreen: false);
+      if (defaultTargetPlatform == TargetPlatform.iOS) {
+        await SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+      }
       widget.onFullscreenChanged?.call(false);
       widget.parameters.onExitFullScreen?.call();
     } else if (call.method == 'onEnterPictureInPicture') {
@@ -106,9 +119,39 @@ class _KinescopeOfflinePlayerState extends State<KinescopeOfflinePlayer> {
     return true;
   }
 
+  Widget _nativeView() {
+    final creationParams = {
+      'contentId': widget.contentId,
+      'options': kinescopePlayerOptionsMap(
+        widget.parameters,
+        autoplay: true,
+      ),
+    };
+    if (defaultTargetPlatform == TargetPlatform.iOS) {
+      return UiKitView(
+        key: _androidViewKey,
+        viewType: _viewType,
+        creationParams: creationParams,
+        creationParamsCodec: const StandardMessageCodec(),
+        gestureRecognizers: <Factory<OneSequenceGestureRecognizer>>{
+          Factory<EagerGestureRecognizer>(EagerGestureRecognizer.new),
+        },
+      );
+    }
+    return KinescopeAndroidPlatformView(
+      key: _androidViewKey,
+      viewType: _viewType,
+      creationParams: creationParams,
+      gestureRecognizers: kinescopeAndroidViewGestureRecognizers(),
+    );
+  }
+
   Future<void> _preparePlatformViewPop() async {
     if (_isFullscreen) {
       applyKinescopeAndroidFullscreenUi(fullscreen: false);
+      if (defaultTargetPlatform == TargetPlatform.iOS) {
+        await SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+      }
       _isFullscreen = false;
     }
     await _methodChannel.invokeMethod<void>(
@@ -131,18 +174,7 @@ class _KinescopeOfflinePlayerState extends State<KinescopeOfflinePlayer> {
               isFullscreen: _isFullscreen,
               isPictureInPicture: false,
               aspectRatio: widget.aspectRatio,
-              androidView: KinescopeAndroidPlatformView(
-                key: _androidViewKey,
-                viewType: _viewType,
-                creationParams: {
-                  'contentId': widget.contentId,
-                  'options': kinescopePlayerOptionsMap(
-                    widget.parameters,
-                    autoplay: true,
-                  ),
-                },
-                gestureRecognizers: kinescopeAndroidViewGestureRecognizers(),
-              ),
+              androidView: _nativeView(),
             ),
     );
   }

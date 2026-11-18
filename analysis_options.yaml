@@ -1,3 +1,7 @@
+analyzer:
+  exclude:
+    - android/**
+    - ios/**
 include: package:surf_lint_rules/analysis_options.yaml
 
 linter:

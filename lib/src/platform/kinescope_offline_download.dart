@@ -18,9 +18,9 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_kinescope_sdk/src/platform/kinescope_android_bridge.dart';
 
-/// Offline video downloads via [kotlin-kinescope-player](https://github.com/kinescope/kotlin-kinescope-player).
+/// Offline video downloads via the native Kinescope player.
 ///
-/// Android only. On other platforms methods are no-ops or return empty values.
+/// Android and iOS. On other platforms methods are no-ops or return empty values.
 class KinescopeOfflineDownload {
   KinescopeOfflineDownload._();
 
@@ -37,7 +37,7 @@ class KinescopeOfflineDownload {
   Stream<KinescopeDownloadUpdate> get updates => _downloadUpdatesController.stream;
 
   bool get isSupported =>
-      !kIsWeb && Platform.isAndroid;
+      !kIsWeb && (Platform.isAndroid || Platform.isIOS);
 
   Future<void> initialize({String? apiKey}) async {
     if (!isSupported) {
@@ -88,7 +88,7 @@ class KinescopeOfflineDownload {
     String? apiKey,
   }) async {
     if (!isSupported) {
-      throw UnsupportedError('Offline downloads are only available on Android');
+      throw UnsupportedError('Offline downloads are only available on Android and iOS');
     }
     await initialize();
     return _bridge.listDownloadQualities(videoId, apiKey: apiKey);
@@ -107,7 +107,7 @@ class KinescopeOfflineDownload {
     String? qualityHint,
   }) async {
     if (!isSupported) {
-      throw UnsupportedError('Offline downloads are only available on Android');
+      throw UnsupportedError('Offline downloads are only available on Android and iOS');
     }
     await initialize();
     await _bridge.ensureDownloadPermissions();
@@ -127,7 +127,7 @@ class KinescopeOfflineDownload {
     String? apiKey,
   }) async {
     if (!isSupported) {
-      throw UnsupportedError('Offline downloads are only available on Android');
+      throw UnsupportedError('Offline downloads are only available on Android and iOS');
     }
     await initialize();
     return _bridge.listDownloadQualitiesFromUrl(url, apiKey: apiKey);
@@ -150,7 +150,7 @@ class KinescopeOfflineDownload {
     String? title,
   }) async {
     if (!isSupported) {
-      throw UnsupportedError('Offline downloads are only available on Android');
+      throw UnsupportedError('Offline downloads are only available on Android and iOS');
     }
     await initialize();
     await _bridge.ensureDownloadPermissions();

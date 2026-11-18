@@ -1,8 +1,8 @@
 # Shared API
 
-Types shared by **native (Android)** and **embed (iOS / Web)**.
+Types shared by **native (Android, iOS)** and **embed (Web)**.
 
-← [Home](../README.md) · [Android](android-native.md) · [Embed](embed-webview.md)
+← [Home](../README.md) · [Android](android-native.md) · [iOS](ios-native.md) · [Web](embed-webview.md)
 
 ---
 
@@ -15,7 +15,7 @@ KinescopePlayer(
 )
 ```
 
-Same widget on every platform: native player on Android, embed on iOS / Web.
+Same widget on every platform: native player on Android and iOS, embed on Web.
 
 ---
 
@@ -40,19 +40,19 @@ controller.timeUpdateStream.listen((update) {
 
 ### Available methods
 
-| Method | Description | Android | iOS / Web |
-| ------ | ----------- | :---: | :---: |
-| `play()` | Plays the currently cued / loaded video. | ✓ | ✓ |
-| `pause()` | Pauses the currently playing video. | ✓ | ✓ |
-| `stop()` | Stops and cancels loading of the current video. | ✓ | ✓ |
-| `load(String videoId)` | Loads and plays the specified video. | ✓ | ✓ |
-| `getCurrentTime()` | Returns current position (`Future<Duration>`). | ✓ | ✓ |
-| `getDuration()` | Returns duration of the video (`Future<Duration>`). | ✓ | ✓ |
-| `seekTo(Duration position)` | Seeks to a specified time in the video. | ✓ | ✓ |
-| `mute()` | Mutes the player. | ✓ | ✓ |
-| `unmute()` | Unmutes the player. | ✓ | ✓ |
-| `setVolume(double volume)` | Sets volume `0.0`–`1.0`. **Android only.** | ✓ | — |
-| `dispose()` | Closes status and time-update streams. | ✓ | ✓ |
+| Method | Description | Android | iOS | Web |
+| ------ | ----------- | :---: | :---: | :---: |
+| `play()` | Plays the currently cued / loaded video. | ✓ | ✓ | ✓ |
+| `pause()` | Pauses the currently playing video. | ✓ | ✓ | ✓ |
+| `stop()` | Stops and cancels loading of the current video. | ✓ | ✓ | ✓ |
+| `load(String videoId)` | Loads and plays the specified video. | ✓ | ✓ | ✓ |
+| `getCurrentTime()` | Returns current position (`Future<Duration>`). | ✓ | ✓ | ✓ |
+| `getDuration()` | Returns duration of the video (`Future<Duration>`). | ✓ | ✓ | ✓ |
+| `seekTo(Duration position)` | Seeks to a specified time in the video. | ✓ | ✓ | ✓ |
+| `mute()` | Mutes the player. | ✓ | ✓ | ✓ |
+| `unmute()` | Unmutes the player. | ✓ | ✓ | ✓ |
+| `setVolume(double volume)` | Sets volume `0.0`–`1.0`. | ✓ | ✓ | — |
+| `dispose()` | Closes status and time-update streams. | ✓ | ✓ | ✓ |
 
 ---
 
@@ -60,40 +60,40 @@ controller.timeUpdateStream.listen((update) {
 
 Initial player options passed into `KinescopePlayerController`.
 
-On **iOS / Web**, parameters map to the Kinescope iframe embed
-On **Android**, the native player applies a subset (marked in the **Android** column). Other values are ignored on Android.
+On **Web**, parameters map to the Kinescope iframe embed.
+On **Android** and **iOS**, the native player applies the columns below. Other values are ignored.
 
 ### All parameters
 
-| Parameter | Description | Default (typical) | Android | iOS / Web |
-| --------- | ----------- | ----------------- | :---: | :---: |
-| `autoplay` | Start playback when the player loads. | `false` / embed default | ✓ | ✓ |
-| `muted` | Start muted. | embed default | ✓ | ✓ |
-| `loop` | Restart the video automatically after it ends. | — | ✓ | ✓ |
-| `playsinline` | Play inline without forcing fullscreen. | — | ✓ | ✓ |
-| `texttrack` | Enable subtitles on load (when available). | — | ✓ native | ✓ embed |
-| `controls` | Show player controls. On Android: master switch for native chrome. | — | ✓ | ✓ |
-| `drmAuthToken` | Authorization Backend token (`drmauthtoken`) for DRM-protected videos. | — | ✓ | ✓ |
-| `showDefaultPoster` | Built-in default poster when metadata has no poster URL. | `true` | ✓ | — |
-| `referer` | HTTP `Referer` when the video has **domain restrictions** in the dashboard. Must match an allow-listed domain. Default native referer is `https://kinescope.io/`. Does not open embedding on other sites. | — | ✓ | — |
-| `autofocus` | Set focus to the player. | `true` (embed) | — | ✓ |
-| `autopause` | Pause when appropriate (embed behaviour). | — | — | ✓ |
-| `preload` | Preload video metadata. | `true` (embed) | — | ✓ |
-| `userAgent` | Overrides default User-Agent. | — | — | ✓ |
-| `externalId` | Any string that represents a user on an external system (analytics). | `''` | — | ✓ |
-| `baseUrl` | Custom embed host. | — | — | ✓ |
-| `dnt` | Disable sent analytics. | — | — | ✓ |
-| `background` | Disable controls; typically used with autoplay / muted / loop. | — | — | ✓ |
-| `t` | Seek the video to this time (seconds) on load. | — | — | ✓ |
-| `transparent` | Transparent background color. | — | — | ✓ |
-| `speedbtn` | Visibility of the playback rate button. | — | — | ✓ |
-| `header` | Visibility of the header. | — | — | ✓ |
-| `disableFiles` | Hide additional materials. | — | — | ✓ |
-| `watermark` | Watermark via [`WatermarkParameters`](#watermarkparameters) (`mode`, `text`). | empty | — | ✓ |
-| `onEnterFullScreen` | Callback when entering fullscreen. | — | ✓ | ✓ |
-| `onExitFullScreen` | Callback when exiting fullscreen. | — | ✓ | ✓ |
-| `onEnterPictureInPicture` | Callback when entering PiP. | — | ✓ | — |
-| `onExitPictureInPicture` | Callback when exiting PiP. | — | ✓ | — |
+| Parameter | Description | Default (typical) | Android | iOS | Web |
+| --------- | ----------- | ----------------- | :---: | :---: | :---: |
+| `autoplay` | Start playback when the player loads. | `false` / embed default | ✓ | ✓ | ✓ |
+| `muted` | Start muted. | embed default | ✓ | ✓ | ✓ |
+| `loop` | Restart the video automatically after it ends. | — | ✓ | ✓ | ✓ |
+| `playsinline` | Play inline. `false` opens native fullscreen after load on iOS. | — | ✓ | ✓ | ✓ |
+| `texttrack` | Enable subtitles on load (when available). On iOS, subtitles are chosen in the native settings menu. | — | ✓ | settings | ✓ |
+| `controls` | Show player controls. Native: master switch for chrome / option buttons. | — | ✓ | ✓ | ✓ |
+| `drmAuthToken` | Authorization Backend token (`drmauthtoken`) for DRM-protected videos. | — | ✓ | ✓ | ✓ |
+| `showDefaultPoster` | Built-in default poster when metadata has no poster URL. | `true` | ✓ | — | — |
+| `referer` | HTTP `Referer` when the video has **domain restrictions** in the dashboard. Must match an allow-listed domain. Default native referer is `https://kinescope.io/`. | — | ✓ | ✓ | — |
+| `autofocus` | Set focus to the player. | `true` (embed) | — | — | ✓ |
+| `autopause` | Pause when appropriate (embed behaviour). | — | — | — | ✓ |
+| `preload` | Preload video metadata. | `true` (embed) | — | — | ✓ |
+| `userAgent` | Overrides default User-Agent. | — | — | — | ✓ |
+| `externalId` | Any string that represents a user on an external system (analytics). | `''` | — | — | ✓ |
+| `baseUrl` | Custom embed host. | — | — | — | ✓ |
+| `dnt` | Disable sent analytics. | — | — | — | ✓ |
+| `background` | Disable controls; typically used with autoplay / muted / loop. | — | — | — | ✓ |
+| `t` | Seek the video to this time (seconds) on load. | — | — | — | ✓ |
+| `transparent` | Transparent background color. | — | — | — | ✓ |
+| `speedbtn` | Visibility of the playback rate button. | — | — | — | ✓ |
+| `header` | Visibility of the header. | — | — | — | ✓ |
+| `disableFiles` | Hide additional materials. | — | — | — | ✓ |
+| `watermark` | Watermark via [`WatermarkParameters`](#watermarkparameters) (`mode`, `text`). | empty | — | — | ✓ |
+| `onEnterFullScreen` | Callback when entering fullscreen. | — | ✓ | ✓ | ✓ |
+| `onExitFullScreen` | Callback when exiting fullscreen. | — | ✓ | ✓ | ✓ |
+| `onEnterPictureInPicture` | Callback when entering PiP. iOS PiP is the native button, without this callback. | — | ✓ | — | — |
+| `onExitPictureInPicture` | Callback when exiting PiP. | — | ✓ | — | — |
 
 ### Example
 
@@ -142,4 +142,5 @@ const WatermarkParameters(
 | | |
 | --- | --- |
 | **Android native** | Setup, PiP, offline, chrome → [android-native.md](android-native.md) |
-| **iOS / Web embed** | WebView / iframe specifics → [embed-webview.md](embed-webview.md) |
+| **iOS native** | KinescopeSDK 1.0.2, fullscreen, PiP, offline → [ios-native.md](ios-native.md) |
+| **Web embed** | iframe specifics → [embed-webview.md](embed-webview.md) |

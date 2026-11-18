@@ -2,7 +2,7 @@
 
 Native side of the SDK: [`kotlin-kinescope-player` **0.1.5**](https://github.com/kinescope/kotlin-kinescope-player) via hybrid-composition `PlatformView`.
 
-← [Home](../README.md) · [Embed (iOS / Web)](embed-webview.md) · [Shared API](api.md)
+← [Home](../README.md) · [iOS (native)](ios-native.md) · [Web (embed)](embed-webview.md) · [Shared API](api.md)
 
 ---
 

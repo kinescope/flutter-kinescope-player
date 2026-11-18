@@ -10,14 +10,16 @@ Under the hood there are **two implementations**:
 | Part | Platforms | Engine |
 | ---- | --------- | ------ |
 | **Native** | Android | [`kotlin-kinescope-player` 0.1.5](https://github.com/kinescope/kotlin-kinescope-player) · ExoPlayer · native UI (fullscreen, PiP, settings, offline, DRM) |
-| **WebView / embed** | iOS, Web | Kinescope iframe in WKWebView (iOS) or iframe / JS API (Web) |
+| **Native** | iOS | [`ios-kinescope-player` 1.0.2](https://github.com/kinescope/ios-kinescope-player) · AVPlayer · native UI (fullscreen, PiP, settings, offline) |
+| **Embed** | Web | Kinescope iframe / JS API |
 
 ## Documentation
 
 | | |
 | --- | --- |
 | [**Android (native)**](doc/android-native.md) | Setup, UI, PiP, orientation, offline / DRM, quality picker |
-| [**iOS & Web (embed)**](doc/embed-webview.md) | WebView / iframe, embed parameters |
+| [**iOS (native)**](doc/ios-native.md) | KinescopeSDK 1.0.2, fullscreen, PiP, DRM token, offline |
+| [**Web (embed)**](doc/embed-webview.md) | iframe / JS player, embed parameters |
 | [**Shared API**](doc/api.md) | `KinescopePlayerController`, shared `PlayerParameters` |
 | [Changelog](CHANGELOG.md) | Release history |
 
@@ -25,7 +27,7 @@ Under the hood there are **two implementations**:
 
 ```yaml
 dependencies:
-  flutter_kinescope_sdk: ^0.2.5
+  flutter_kinescope_sdk: ^0.2.6
 ```
 
 | | |
@@ -33,9 +35,11 @@ dependencies:
 | Flutter | `>= 3.35.0` |
 | Dart | `>= 3.9.0 < 4.0.0` |
 | Android | `minSdk 24`, **JDK 17** |
-| iOS | Swift, Xcode 11+ |
+| iOS | Swift, **iOS 15**, Xcode |
 
 Android setup (manifest, API key, JDK) → [doc/android-native.md](doc/android-native.md).
+
+iOS setup (deployment target, CocoaPods tag, PiP) → [doc/ios-native.md](doc/ios-native.md).
 
 ## Quick start
 
@@ -52,7 +56,7 @@ KinescopePlayer(
 )
 ```
 
-Same widget everywhere: native player on Android, embed on iOS / Web.
+Same widget everywhere: native player on Android and iOS, embed on Web.
 
 ## Example
 
@@ -61,7 +65,7 @@ cd example
 flutter run
 ```
 
-On Android the demo includes online playback and offline downloads with a quality picker.
+The demo menu opens the player, sample videos with subtitles and chapters, and offline downloads with a quality picker on Android and iOS.
 
 ## License
 

@@ -204,7 +204,7 @@ class _OfflineAddDownloadPageState extends State<OfflineAddDownloadPage> {
         return;
       }
 
-      final info = await _downloads.downloadFromUrl(
+      await _downloads.downloadFromUrl(
         url,
         videoHeightPx: selected.height,
         videoWidthPx: selected.width,
@@ -213,20 +213,7 @@ class _OfflineAddDownloadPageState extends State<OfflineAddDownloadPage> {
       if (!mounted) {
         return;
       }
-      setState(() {
-        _startingFromUrl = false;
-        final videoId = info.videoId;
-        if (videoId != null && videoId.isNotEmpty) {
-          _downloadsByVideoId[videoId] = info;
-        }
-      });
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            'Downloading${info.title != null ? ' "${info.title}"' : ''} (${selected.label})...',
-          ),
-        ),
-      );
+      Navigator.of(context).pop(true);
     } on Object catch (error) {
       if (!mounted) {
         return;

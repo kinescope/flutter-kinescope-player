@@ -1,11 +1,24 @@
 # Changelog
 
 
-## 0.2.5
+## 0.2.6
 
-Android player aligned with **kotlin-kinescope-player 0.1.5** 
+Android player aligned with **kotlin-kinescope-player 0.1.5**. iOS player switched from the WKWebView embed to **ios-kinescope-player 1.0.2** (`KinescopeSDK`).
 
-- Native dependency `0.1.5`
+### iOS
+
+- Native `UiKitView` player: play, pause, stop, seek, volume, mute, status and time updates
+- `PlayerParameters` on iOS: `autoplay`, `muted`, `loop`, `controls`, `playsinline`, `drmAuthToken`, `referer`
+- Fullscreen uses the native controller; Back leaves fullscreen before the route pops
+- Offline download and playback use the same `KinescopeOfflineDownload` / `KinescopeOfflinePlayer` API as Android
+- Offline playback keeps the rendition chosen at download time, so the gear shows that quality
+- Download progress updates at most twice per second per video
+- Docs: `doc/ios-native.md`. Web embed stays in `doc/embed-webview.md`
+
+### Android and shared
+
+- Native Android dependency `kotlin-kinescope-player` `0.1.5`
+- Example menu: Subtitles, Chapters, and Offline viewing
 - `PlayerParameters.drmAuthToken` — Authorization Backend token (Android options; iOS/Web `?drmauthtoken=` on the video URL)
 - `PlayerParameters.showDefaultPoster` — opt out of the built-in default poster (Android)
 - `PlayerParameters.referer` — HTTP Referer for **domain restrictions** (Android `setReferer` / options; default remains `https://kinescope.io/`)
